@@ -34,8 +34,12 @@ export interface GlobalDataStats {
   distinctDepartureCountries: string[];
   cityCount: number;
   distinctCities: string[];
+  departureCityCount: number;
+  distinctDepartureCities: string[];
   airlineCount: number;
   distinctAirlines: string[];
+  routeCount: number;
+  distinctRoutes: string[];
   modelVersion: string | null;
   benchmarkModel: string | null;
   overallWmape: number | null;
@@ -286,39 +290,46 @@ export interface ModelPredictionRecord {
   warnings: string[];
 }
 
-// 8. flight_market_monthly.json (expected runtime structure)
+// 8. flight_market_monthly.json
 export interface FlightMarketMonthlyRecord {
   month: string; // YYYY-MM
+  route_key: string; // contains arrival city/code e.g. "DEL-AUH"
+  departure_city: string;
   departure_country: string;
-  city?: string;
-  airline?: string;
-  total_seats?: number | null;
-  total_pax?: number | null;
-  p2p?: number | null;
-  transfer?: number | null;
-  transit?: number | null;
-  load_factor?: number | null; // 0 to 100 percentage
-  p2p_share?: number | null; // 0.0 to 1.0 fraction
-  transfer_share?: number | null; // 0.0 to 1.0 fraction
-  transit_share?: number | null; // 0.0 to 1.0 fraction
-  quality_flags?: string[];
-  [key: string]: unknown;
+  arrival_city: string;
+  arrival_airport: string;
+  airline: string;
+  total_seats: number | null;
+  total_pax: number | null;
+  p2p: number | null;
+  transfer: number | null;
+  transit: number | null;
+  load_factor: number | null; // 0 to 100 percentage
+  p2p_share: number | null; // 0.0 to 1.0 fraction
+  transfer_share: number | null; // 0.0 to 1.0 fraction
+  transit_share: number | null; // 0.0 to 1.0 fraction
+  quality_flags: string[];
 }
 
-// 9. data_quality.json (expected runtime structure)
+// 9. data_quality.json
+export interface DataQualityRecordItem {
+  id: string;
+  code: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
+  market: string;
+  month: string;
+  dataset: string;
+  field: string;
+  affected_value: number | string | null;
+  description: string;
+  governance_action: string;
+}
+
 export interface DataQualityDoc {
   description?: string;
-  recordsCount?: number;
-  data?: unknown[];
-  status?: string;
-  source?: string;
-  flags?: Array<{
-    code: string;
-    description: string;
-    affected_rows?: number;
-    sample_records?: string[];
-  }>;
-  [key: string]: unknown;
+  generated_at?: string;
+  total_records?: number;
+  records: DataQualityRecordItem[];
 }
 
 // Complete Loaded Datasets Container

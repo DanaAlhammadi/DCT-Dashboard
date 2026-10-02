@@ -1,0 +1,115 @@
+{
+  "description": "SILA Official Data Quality & Governance Register",
+  "generated_at": "2026-10-02T06:30:00Z",
+  "total_records": 9,
+  "records": [
+    {
+      "id": "DQ-001",
+      "code": "incomplete_target_month",
+      "severity": "HIGH",
+      "market": "ARMENIA",
+      "month": "2022-01",
+      "dataset": "hotel_market_monthly",
+      "field": "new_arrivals",
+      "affected_value": null,
+      "description": "14 calendar days missing from hotel check-in series; month target excluded from benchmark scoring.",
+      "governance_action": "Null preserved; never substituted with zero."
+    },
+    {
+      "id": "DQ-002",
+      "code": "missing_same_day_guests",
+      "severity": "MEDIUM",
+      "market": "AUSTRALIA",
+      "month": "2022-01",
+      "dataset": "hotel_market_monthly",
+      "field": "same_day_guests",
+      "affected_value": null,
+      "description": "Asterisk in raw register signifies missing or suppressed observation.",
+      "governance_action": "Excluded from guest-night subtraction formulas."
+    },
+    {
+      "id": "DQ-003",
+      "code": "missing_row",
+      "severity": "HIGH",
+      "market": "AZERBAIJAN",
+      "month": "2022-01",
+      "dataset": "hotel_market_monthly",
+      "field": "guests",
+      "affected_value": null,
+      "description": "5 missing row dates in raw partition.",
+      "governance_action": "Monthly guest aggregate marked incomplete."
+    },
+    {
+      "id": "DQ-004",
+      "code": "pax_above_seats",
+      "severity": "MEDIUM",
+      "market": "INDIA",
+      "month": "2025-01",
+      "dataset": "flight_market_monthly",
+      "field": "load_factor",
+      "affected_value": 104.2,
+      "description": "Raw flight record passenger count exceeds recorded seat capacity (infant excess or transit overlap).",
+      "governance_action": "Infant excess adjustment applied in EDA calibration."
+    },
+    {
+      "id": "DQ-005",
+      "code": "linear_trend_extrapolation",
+      "severity": "LOW",
+      "market": "CHINA",
+      "month": "2025-06",
+      "dataset": "model_predictions",
+      "field": "baseline_prediction",
+      "affected_value": 26900.6,
+      "description": "Regression baseline applies linear trend extrapolation past 2024 cutoff.",
+      "governance_action": "Reported alongside seasonal benchmark for transparency."
+    },
+    {
+      "id": "DQ-006",
+      "code": "calendar_only_missing_p2p",
+      "severity": "HIGH",
+      "market": "BRAZIL",
+      "month": "2025-01",
+      "dataset": "model_predictions",
+      "field": "observed_p2p_prediction",
+      "affected_value": null,
+      "description": "No matching departure country passenger response in regression model; calendar fallback engaged.",
+      "governance_action": "Scenario effect supported flagged as false."
+    },
+    {
+      "id": "DQ-007",
+      "code": "index_withheld_incomplete_year",
+      "severity": "MEDIUM",
+      "market": "ARMENIA",
+      "month": "2022-01",
+      "dataset": "market_seasonality",
+      "field": "seasonality_index",
+      "affected_value": null,
+      "description": "Seasonality index withheld because 2022 has fewer than 12 complete calendar months.",
+      "governance_action": "Index kept null to avoid skewing annual 100-baseline."
+    },
+    {
+      "id": "DQ-008",
+      "code": "uncalibrated_uncertainty_bounds",
+      "severity": "INFO",
+      "market": "ALL",
+      "month": "ALL",
+      "dataset": "model_predictions",
+      "field": "lower_bound",
+      "affected_value": null,
+      "description": "Prediction intervals were not formally calibrated on training distribution.",
+      "governance_action": "Lower and upper bounds kept null rather than artificial margins."
+    },
+    {
+      "id": "DQ-009",
+      "code": "benchmark_outperforms_regression",
+      "severity": "CRITICAL",
+      "market": "ALL",
+      "month": "2025-01_to_2026-02",
+      "dataset": "model_metrics",
+      "field": "wmape",
+      "affected_value": 25.52,
+      "description": "Seasonal benchmark (22.63% WMAPE) beat reference aviation regression (25.52% WMAPE) on holdout.",
+      "governance_action": "Planners must consult both benchmark and regression outputs."
+    }
+  ]
+}

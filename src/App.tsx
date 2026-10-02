@@ -18,9 +18,16 @@ import { CompareOpportunitiesTab } from './components/compare/CompareOpportuniti
 import { TrustDataTab } from './components/trust/TrustDataTab';
 import { AskAeroStayDrawer } from './components/chat/AskAeroStayDrawer';
 import { DataIntegrationCheck } from './components/dev/DataIntegrationCheck';
+import { BackendHealthIndicator } from './components/dev/BackendHealthIndicator';
+import { OfficialScenarioResultView } from './components/planner/OfficialScenarioResultView';
 
 import { DataService } from './services/dataService';
 import { ScenarioService } from './services/scenarioService';
+import {
+  SilaScenarioService,
+  OFFICIAL_INDIA_EXAMPLE_REQUEST,
+  classifyError,
+} from './services/silaScenarioService';
 import {
   ScenarioInput,
   BaselineFlightData,
@@ -28,12 +35,17 @@ import {
   ScenarioResult,
   SavedScenario,
 } from './types/dashboard';
+import {
+  SilaScenarioResponse,
+  SilaErrorState,
+} from './types/silaScenario';
 
 import {
   Play,
   RotateCcw,
   Bookmark,
   BookmarkCheck,
+  Sparkles,
 } from 'lucide-react';
 
 const WELCOME_SEEN_KEY = 'aerostay_welcome_seen_v1';
@@ -124,6 +136,27 @@ export default function App() {
     };
     return ScenarioService.simulate(initInput, initBaseline, initRoute);
   });
+
+  // Official Python Scenario Backend State
+  const [officialScenarioResult, setOfficialScenarioResult] = useState<SilaScenarioResponse | null>(null);
+  const [officialScenarioError, setOfficialScenarioError] = useState<SilaErrorState | null>(null);
+  const [isOfficialLoading, setIsOfficialLoading] = useState<boolean>(false);
+
+  // Run Official India Example Action via SilaScenarioService
+  const handleRunOfficialIndiaExample = async () => {
+    setIsOfficialLoading(true);
+    setOfficialScenarioError(null);
+    try {
+      const resp = await SilaScenarioService.runScenario(OFFICIAL_INDIA_EXAMPLE_REQUEST);
+      setOfficialScenarioResult(resp);
+      setOfficialScenarioError(null);
+    } catch (err: unknown) {
+      setOfficialScenarioResult(null);
+      setOfficialScenarioError(classifyError(err));
+    } finally {
+      setIsOfficialLoading(false);
+    }
+  };
 
   // Update input when route changes
   const handleSelectRoute = (routeId: string) => {
@@ -354,6 +387,48 @@ export default function App() {
                 {/* Validation Panel */}
                 <ValidationPanel validation={validation} />
 
+                {/* Official Scenario Backend Integration Block */}
+                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-700/80 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-1.5 text-white">
+                      <Sparkles className="w-4 h-4 text-amber-400" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-teal-300">
+                        Official Backend Integration
+                      </span>
+                    </div>
+                    <BackendHealthIndicator />
+                  </div>
+
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    Test live Python scenario backend (<code className="text-teal-300 font-mono">linear_v009</code>) with the official India example (+1,000 seats in Nov &amp; Dec 2025).
+                  </p>
+
+                  <button
+                    id="run-official-india-example-btn"
+                    type="button"
+                    disabled={isOfficialLoading}
+                    onClick={handleRunOfficialIndiaExample}
+                    title="Run official India example (+1,000 seats Nov-Dec 2025) on Python backend"
+                    className={`w-full py-3 px-4 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 transition-all ${
+                      isOfficialLoading
+                        ? 'bg-teal-900 text-teal-300 cursor-wait'
+                        : 'bg-teal-500 hover:bg-teal-400 text-slate-950 shadow-teal-950/20 hover:scale-[1.01] active:scale-[0.99]'
+                    }`}
+                  >
+                    {isOfficialLoading ? (
+                      <>
+                        <span className="w-3.5 h-3.5 border-2 border-slate-950/40 border-t-slate-950 rounded-full animate-spin" />
+                        <span>Connecting to Python Backend…</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-3.5 h-3.5 fill-current" />
+                        <span>Run Official India Example</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
                 {/* 4. Run Scenario Button */}
                 <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-wrap items-center gap-2.5">
                   <button
@@ -412,6 +487,20 @@ export default function App() {
 
               {/* Right Column: Four Main Outputs (Height reduced by 30%) + Executive Decision Support */}
               <div className="lg:col-span-7 space-y-4" id="planner-results-column">
+                {/* Official Python Scenario Backend Response View */}
+                {(officialScenarioResult || officialScenarioError || isOfficialLoading) && (
+                  <OfficialScenarioResultView
+                    result={officialScenarioResult}
+                    error={officialScenarioError}
+                    isLoading={isOfficialLoading}
+                    onRetry={handleRunOfficialIndiaExample}
+                    onClear={() => {
+                      setOfficialScenarioResult(null);
+                      setOfficialScenarioError(null);
+                    }}
+                  />
+                )}
+
                 {/* 1. Four Main Outputs (Height reduced by 30%, expandable drawer trigger integrated) */}
                 <KPIGrid
                   result={scenarioResult}
