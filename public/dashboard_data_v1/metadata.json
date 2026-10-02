@@ -1,0 +1,26 @@
+{
+  "data_version": "data_v001",
+  "dashboard_schema_version": "1.0.0",
+  "package_version": "dct_model_handoff_v1",
+  "generated_at": "2026-10-01T18:37:38.652787+00:00",
+  "hotel_date_min": "2022-01-01",
+  "hotel_date_max": "2026-02-28",
+  "flight_date_min": "2022-01-01",
+  "flight_date_max": "2026-02-28",
+  "date_range_basis": "Calendar coverage of the prepared monthly tables; monthly aviation stamps in 2022 are not individual flight dates.",
+  "model_status": "evaluated_with_limitations",
+  "current_target": "monthly_new_arrivals",
+  "model_version": "linear_v009",
+  "conversion_version": "conversion_v002",
+  "converted_target": "recorded_guest_days_proxy",
+  "forecast_origin": "2024-12-31",
+  "reference_year": 2024,
+  "notes": [
+    "model_status extends the originally proposed enum; evaluation does not imply benchmark superiority.",
+    "Data files include all available history. Model fitting stops at the frozen cutoff.",
+    "Null means missing, withheld, unsupported or undefined; related flags distinguish the reason.",
+    "baseline_prediction means the regression baseline; seasonal_benchmark_prediction is separate.",
+    "Load factor and coverage are percentages; P2P/transfer/transit/new-arrival shares are fractions.",
+    "Forecasts, scenario assumptions and exploratory correlations must remain separately labelled in the UI."
+  ]
+}

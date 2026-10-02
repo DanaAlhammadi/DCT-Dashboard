@@ -1,0 +1,285 @@
+[
+  {
+    "id": "guests",
+    "title": "Guests",
+    "category": "hotel",
+    "explanation": "Daily recorded hotel guests for a nationality, including arrivals and continuing stays. Summing daily records produces the recorded guest-day proxy used here.",
+    "limitations": "The dictionary does not establish that each record is an occupied overnight guest-night or a unique person. Later Guests labels are withheld.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 2,
+    "keywords": [
+      "guests",
+      "guest days",
+      "continuing stays"
+    ]
+  },
+  {
+    "id": "new_arrivals",
+    "title": "New Arrivals",
+    "category": "hotel",
+    "explanation": "Hotel check-ins recorded on a date. Complete daily counts are summed to the monthly model target.",
+    "limitations": "This is hotel check-ins, not all international visitors. The dictionary describes it as a subset of Guests; isolated inconsistent records retain quality flags.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 2,
+    "keywords": [
+      "check-in",
+      "arrivals",
+      "target"
+    ]
+  },
+  {
+    "id": "same_day_guests",
+    "title": "Same-Day Guests",
+    "category": "hotel",
+    "explanation": "Guests who visit and depart on the same day without an overnight stay.",
+    "limitations": "The asterisk can mean zero, suppressed or not applicable. It remains missing. The dictionary does not establish a universal subtraction rule from Guests.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 3,
+    "keywords": [
+      "same-day",
+      "overnight",
+      "asterisk"
+    ]
+  },
+  {
+    "id": "total_seats",
+    "title": "Total Seats",
+    "category": "aviation",
+    "explanation": "Recorded seat capacity across cabin classes, aggregated to month and route group.",
+    "limitations": "A recorded group does not establish complete flight coverage. Capacity does not directly identify hotel arrivals.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 7,
+    "keywords": [
+      "seats",
+      "capacity"
+    ]
+  },
+  {
+    "id": "total_pax",
+    "title": "Total PAX",
+    "category": "aviation",
+    "explanation": "Recorded passengers including P2P, transfer and transit; the infant-excluding field is separate.",
+    "limitations": "It includes people who do not terminate their journey in Abu Dhabi. Some recorded passenger counts exceed seats.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 6,
+    "keywords": [
+      "passengers",
+      "pax",
+      "infants"
+    ]
+  },
+  {
+    "id": "p2p",
+    "title": "P2P",
+    "category": "aviation",
+    "explanation": "Point-to-point passengers whose recorded journey terminates at Abu Dhabi. The model uses monthly P2P from the departure country matching the hotel nationality name.",
+    "limitations": "Departure country does not identify passport nationality, hotel use, residence or a causal conversion rate.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 6,
+    "keywords": [
+      "point-to-point",
+      "destination",
+      "passengers"
+    ]
+  },
+  {
+    "id": "transfer",
+    "title": "Transfer",
+    "category": "aviation",
+    "explanation": "Passengers arriving on a route and transferring to another flight at Abu Dhabi, involving a change of aircraft or flight number.",
+    "limitations": "Transfer passengers are not automatically hotel guests or destination visitors.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 7,
+    "keywords": [
+      "transfer",
+      "connection"
+    ]
+  },
+  {
+    "id": "transit",
+    "title": "Transit",
+    "category": "aviation",
+    "explanation": "Passengers in transit through Abu Dhabi; the dictionary typically describes remaining on the same aircraft or a simpler connection.",
+    "limitations": "Do not assume transit passengers stay in hotels.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 7,
+    "keywords": [
+      "transit",
+      "connection"
+    ]
+  },
+  {
+    "id": "load_factor",
+    "title": "Load Factor",
+    "category": "aviation",
+    "explanation": "Total PAX divided by Total Seats, displayed as a percentage. Scenario overrides preserve reference P2P share unless an added route has an explicit share assumption.",
+    "limitations": "Historical values above 100 percent remain flagged. Planning overrides range from zero to 100 percent; they are assumptions.",
+    "source_document": "reference/Data_Dictionary.pdf",
+    "source_page": 6,
+    "keywords": [
+      "load factor",
+      "occupancy",
+      "seats"
+    ]
+  },
+  {
+    "id": "missing_values",
+    "title": "Missing-value rules",
+    "category": "data_quality",
+    "explanation": "Missing and ambiguous asterisk values stay null. Partial available sums are retained in separate observed fields; zero is used only for an actual recorded zero or an explicitly assumed removed route.",
+    "limitations": "Never replace null with zero in charts, scores or model inputs. Intentional withholding differs from missing measurements.",
+    "source_document": "research/data/prepared/data_v001/README.md",
+    "source_page": null,
+    "keywords": [
+      "null",
+      "missing",
+      "zero",
+      "withheld"
+    ]
+  },
+  {
+    "id": "complete_month",
+    "title": "Complete-month rules",
+    "category": "data_quality",
+    "explanation": "A hotel metric is complete only when every calendar day has that metric observed. Guests, New Arrivals and Same-Day Guests have separate coverage tests.",
+    "limitations": "Flight completeness covers recorded contributing rows, not an unknown expected flight roster. Incomplete hotel months remain in exports but are excluded from complete-target fitting and scores.",
+    "source_document": "dashboard_data_v1/DATA_FIELDS_MONTHLY.md",
+    "source_page": null,
+    "keywords": [
+      "coverage",
+      "complete",
+      "calendar days"
+    ]
+  },
+  {
+    "id": "seasonality",
+    "title": "Seasonality",
+    "category": "eda",
+    "explanation": "The dashboard index compares a complete month's daily mean with the same nationality and metric's full-year daily mean. An index of 100 represents that year's daily average.",
+    "limitations": "Indices require all twelve complete months. They describe the recorded year and can reflect trends or unusual events. The model learns calendar-month indicators separately.",
+    "source_document": "dashboard_data_v1/DATA_FIELDS_MONTHLY.md",
+    "source_page": null,
+    "keywords": [
+      "seasonality",
+      "summer",
+      "index"
+    ]
+  },
+  {
+    "id": "adjusted_correlation",
+    "title": "Adjusted correlation",
+    "category": "eda",
+    "explanation": "Compare hotel arrivals and departure-country P2P after removing their fitted calendar-month patterns, linear trends and association with airport P2P excluding that country. Correlate the remaining residuals.",
+    "limitations": "At least 24 paired months and ten residual degrees of freedom are required. Adjustment cannot prove a route, nationality flow or causal effect; many tested pairs may look strong by chance.",
+    "source_document": "reference/01_eda.ipynb",
+    "source_page": null,
+    "keywords": [
+      "correlation",
+      "adjustment",
+      "residuals"
+    ]
+  },
+  {
+    "id": "market_mapping",
+    "title": "Market mapping",
+    "category": "eda",
+    "explanation": "The mapping file screens associations across hotel nationalities and departure countries. The fitted regression uses matching country names rather than selected alternatives.",
+    "limitations": "Full-history exploratory correlations include the final evaluation dates. They are not validated travel flows or training-only selected predictors.",
+    "source_document": "dashboard_data_v1/MAPPING_KNOWLEDGE_FIELDS.md",
+    "source_page": null,
+    "keywords": [
+      "mapping",
+      "nationality",
+      "hub",
+      "country"
+    ]
+  },
+  {
+    "id": "historical_support",
+    "title": "Historical support",
+    "category": "model",
+    "explanation": "Support fields track training months, repeated calendar combinations, passenger variation, input ranges and whether a local guest-day factor can be fitted.",
+    "limitations": "These checks describe available evidence, not statistical confidence or causal validity. Twelve nationalities lack a matching passenger response.",
+    "source_document": "model_runtime/src/scenario_engine.py",
+    "source_page": null,
+    "keywords": [
+      "support",
+      "unseen",
+      "range",
+      "fallback"
+    ]
+  },
+  {
+    "id": "wmape",
+    "title": "WMAPE",
+    "category": "evaluation",
+    "explanation": "Sum absolute prediction errors, divide by the sum of observed targets, and multiply by 100. Lower is better; the main comparisons use identical eligible observations.",
+    "limitations": "It is not the share of correct predictions. Large-volume markets dominate; inspect market and season scores too. It is undefined when total actual demand is zero.",
+    "source_document": "model_runtime/src/calendar_model.py",
+    "source_page": null,
+    "keywords": [
+      "wmape",
+      "error",
+      "accuracy",
+      "metric"
+    ]
+  },
+  {
+    "id": "final_results",
+    "title": "Final model comparison",
+    "category": "evaluation",
+    "explanation": "On January 2025 to February 2026, arrival WMAPE is 25.52 percent for the reference-driven regression and 22.63 percent for the seasonal benchmark. Actual-P2P conditional prediction scores 23.31 percent.",
+    "limitations": "The regression did not beat the benchmark. Guest-day scores cover only January to July 2025. These test outcomes have now been used for evaluation.",
+    "source_document": "results/final_v001/summary.json",
+    "source_page": null,
+    "keywords": [
+      "benchmark",
+      "final test",
+      "forecast"
+    ]
+  },
+  {
+    "id": "guest_day_conversion",
+    "title": "Guest-day conversion",
+    "category": "model",
+    "explanation": "Multiply predicted check-ins by a historical Guests-to-New-Arrivals ratio on jointly complete training months. Forty-two markets use local factors and three use the pooled fallback.",
+    "limitations": "This produces recorded guest-day proxies, not verified occupied guest nights or measured length of stay. It does not allocate stays across month boundaries.",
+    "source_document": "model_runtime/src/guest_day_conversion.py",
+    "source_page": null,
+    "keywords": [
+      "conversion",
+      "guest nights",
+      "length of stay",
+      "proxy"
+    ]
+  },
+  {
+    "id": "scenario",
+    "title": "Scenario calculation",
+    "category": "model",
+    "explanation": "Apply explicit aviation controls to the 2024 monthly reference, derive changed P2P and run the frozen regression for baseline and scenario. Aggregate monthly outputs over the requested period.",
+    "limitations": "This estimates a predictive response under declared assumptions. It does not establish the causal hotel effect of changing flights. The origin stays at December 2024 and does not auto-refresh.",
+    "source_document": "model_runtime/README.md",
+    "source_page": null,
+    "keywords": [
+      "scenario",
+      "baseline",
+      "frequency",
+      "reference"
+    ]
+  },
+  {
+    "id": "uncertainty",
+    "title": "Bounds and sensitivity",
+    "category": "evaluation",
+    "explanation": "Bounds are null because intervals were not calibrated. Named sensitivity cases change passenger and conversion assumptions in both baseline and scenario.",
+    "limitations": "Lower and higher assumption cases are not confidence intervals or probability bounds.",
+    "source_document": "model_runtime/README.md",
+    "source_page": null,
+    "keywords": [
+      "bounds",
+      "uncertainty",
+      "sensitivity"
+    ]
+  }
+]

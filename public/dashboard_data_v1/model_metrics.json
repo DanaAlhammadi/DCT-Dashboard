@@ -1,0 +1,646 @@
+{
+  "model_version": "linear_v009",
+  "target": "monthly_new_arrivals",
+  "model_status": "evaluated_with_limitations",
+  "training_period": {
+    "start": "2022-01-01",
+    "end": "2024-12-31"
+  },
+  "validation_period": {
+    "start": "2024-01-01",
+    "end": "2024-12-31",
+    "role": "development selection using earlier fits; subsequently included in final refit"
+  },
+  "test_period": {
+    "start": "2025-01-01",
+    "end": "2026-02-28"
+  },
+  "forecast_origin": "2024-12-31",
+  "reference_year": 2024,
+  "overall_wmape": 25.52301270462577,
+  "wmape_unit": "percent",
+  "primary_prediction_type": "reference_aviation_forecast",
+  "wmape_by_nationality": [
+    {
+      "nationality": "ARMENIA",
+      "rows": 11,
+      "actual_total": 31292.0,
+      "predicted_total": 39779.87719346673,
+      "wmape_percent": 31.3000299502611,
+      "mae": 890.4004883668821,
+      "bias_percent": 27.124751353274707
+    },
+    {
+      "nationality": "AUSTRALIA",
+      "rows": 14,
+      "actual_total": 48938.0,
+      "predicted_total": 47358.1859047206,
+      "wmape_percent": 18.54176777684276,
+      "mae": 648.1407367593794,
+      "bias_percent": -3.2281950534950226
+    },
+    {
+      "nationality": "AUSTRIA",
+      "rows": 12,
+      "actual_total": 19964.0,
+      "predicted_total": 16421.11090750847,
+      "wmape_percent": 18.766379174548184,
+      "mae": 312.2099948672333,
+      "bias_percent": -17.746388962590313
+    },
+    {
+      "nationality": "AZERBAIJAN",
+      "rows": 7,
+      "actual_total": 10792.0,
+      "predicted_total": 7663.777289529502,
+      "wmape_percent": 39.716133548764375,
+      "mae": 612.3093046546645,
+      "bias_percent": -28.986496575894176
+    },
+    {
+      "nationality": "BAHRAIN",
+      "rows": 13,
+      "actual_total": 39933.0,
+      "predicted_total": 32155.947228686236,
+      "wmape_percent": 33.98171166506054,
+      "mae": 1043.839763016048,
+      "bias_percent": -19.475252977020915
+    },
+    {
+      "nationality": "BELGIUM",
+      "rows": 14,
+      "actual_total": 23124.0,
+      "predicted_total": 23871.257110123814,
+      "wmape_percent": 11.69081438601812,
+      "mae": 193.0988513302021,
+      "bias_percent": 3.231521839317675
+    },
+    {
+      "nationality": "BRAZIL",
+      "rows": 13,
+      "actual_total": 19317.0,
+      "predicted_total": 14045.553678516657,
+      "wmape_percent": 35.82242732711156,
+      "mae": 532.2937143675492,
+      "bias_percent": -27.289156294887114
+    },
+    {
+      "nationality": "CANADA",
+      "rows": 14,
+      "actual_total": 48486.0,
+      "predicted_total": 48592.79032529172,
+      "wmape_percent": 10.581226259889467,
+      "mae": 366.4580974550005,
+      "bias_percent": 0.22024981498105714
+    },
+    {
+      "nationality": "CHINA",
+      "rows": 14,
+      "actual_total": 319826.0,
+      "predicted_total": 443161.7540692602,
+      "wmape_percent": 55.535269436401144,
+      "mae": 12686.87363054745,
+      "bias_percent": 38.56339199103891
+    },
+    {
+      "nationality": "CZECHIA",
+      "rows": 10,
+      "actual_total": 11400.0,
+      "predicted_total": 15446.117633218139,
+      "wmape_percent": 36.69739896175946,
+      "mae": 418.3503481640579,
+      "bias_percent": 35.49225994050999
+    },
+    {
+      "nationality": "DENMARK",
+      "rows": 5,
+      "actual_total": 2559.0,
+      "predicted_total": 3262.5135843349185,
+      "wmape_percent": 28.927122572926287,
+      "mae": 148.04901332823675,
+      "bias_percent": 27.49173834837509
+    },
+    {
+      "nationality": "EGYPT",
+      "rows": 14,
+      "actual_total": 59621.0,
+      "predicted_total": 62966.511990776664,
+      "wmape_percent": 15.586616911015014,
+      "mae": 663.7783477511615,
+      "bias_percent": 5.6112980171024684
+    },
+    {
+      "nationality": "FINLAND",
+      "rows": 4,
+      "actual_total": 1396.0,
+      "predicted_total": 2204.0385928893143,
+      "wmape_percent": 57.882420694076956,
+      "mae": 202.00964822232856,
+      "bias_percent": 57.882420694076956
+    },
+    {
+      "nationality": "FRANCE",
+      "rows": 14,
+      "actual_total": 105321.0,
+      "predicted_total": 114989.91517337286,
+      "wmape_percent": 13.02830196729744,
+      "mae": 980.1098510698097,
+      "bias_percent": 9.180424771292376
+    },
+    {
+      "nationality": "GERMANY",
+      "rows": 14,
+      "actual_total": 117968.0,
+      "predicted_total": 124206.02423469363,
+      "wmape_percent": 13.998926020942587,
+      "mae": 1179.5895034561108,
+      "bias_percent": 5.287895221325807
+    },
+    {
+      "nationality": "INDIA",
+      "rows": 14,
+      "actual_total": 482097.0,
+      "predicted_total": 414281.2346622917,
+      "wmape_percent": 19.615217239305174,
+      "mae": 6754.598132440934,
+      "bias_percent": -14.066829981872594
+    },
+    {
+      "nationality": "IRELAND",
+      "rows": 14,
+      "actual_total": 22103.0,
+      "predicted_total": 22738.69113162219,
+      "wmape_percent": 11.719386197383614,
+      "mae": 185.02399508626428,
+      "bias_percent": 2.876040047152815
+    },
+    {
+      "nationality": "ISRAEL",
+      "rows": 14,
+      "actual_total": 71121.0,
+      "predicted_total": 44362.63822295074,
+      "wmape_percent": 37.62371420121939,
+      "mae": 1911.3115555035172,
+      "bias_percent": -37.62371420121939
+    },
+    {
+      "nationality": "ITALY",
+      "rows": 14,
+      "actual_total": 81186.0,
+      "predicted_total": 95035.84481017562,
+      "wmape_percent": 22.08475450122812,
+      "mae": 1280.6949135262187,
+      "bias_percent": 17.059400401763384
+    },
+    {
+      "nationality": "JAPAN",
+      "rows": 14,
+      "actual_total": 21221.0,
+      "predicted_total": 22636.004358939703,
+      "wmape_percent": 17.33335301580572,
+      "mae": 262.73648882029516,
+      "bias_percent": 6.6679438242293125
+    },
+    {
+      "nationality": "JORDAN",
+      "rows": 14,
+      "actual_total": 32211.0,
+      "predicted_total": 29817.841342746746,
+      "wmape_percent": 22.753147144084735,
+      "mae": 523.5011590415095,
+      "bias_percent": -7.429631670091772
+    },
+    {
+      "nationality": "KAZAKHSTAN",
+      "rows": 14,
+      "actual_total": 52191.0,
+      "predicted_total": 92712.55799075286,
+      "wmape_percent": 77.64089209011678,
+      "mae": 2894.396999339489,
+      "bias_percent": 77.64089209011678
+    },
+    {
+      "nationality": "KUWAIT",
+      "rows": 13,
+      "actual_total": 99545.0,
+      "predicted_total": 109231.55614836693,
+      "wmape_percent": 35.22037960251748,
+      "mae": 2696.9328365635406,
+      "bias_percent": 9.730831431379697
+    },
+    {
+      "nationality": "LEBANON",
+      "rows": 13,
+      "actual_total": 14225.0,
+      "predicted_total": 12832.73555346683,
+      "wmape_percent": 25.183955611300405,
+      "mae": 275.5705912082679,
+      "bias_percent": -9.78744777879207
+    },
+    {
+      "nationality": "MEXICO",
+      "rows": 6,
+      "actual_total": 2782.0,
+      "predicted_total": 2572.781687689382,
+      "wmape_percent": 38.80879121203983,
+      "mae": 179.94342858649134,
+      "bias_percent": -7.520428192329902
+    },
+    {
+      "nationality": "MOROCCO",
+      "rows": 13,
+      "actual_total": 15164.0,
+      "predicted_total": 13444.915840964171,
+      "wmape_percent": 22.587245592891115,
+      "mae": 263.47153243892376,
+      "bias_percent": -11.336614079634849
+    },
+    {
+      "nationality": "NETHERLANDS",
+      "rows": 14,
+      "actual_total": 35202.0,
+      "predicted_total": 36848.18866469064,
+      "wmape_percent": 16.089687132154424,
+      "mae": 404.56369030435724,
+      "bias_percent": 4.676406637948507
+    },
+    {
+      "nationality": "NORWAY",
+      "rows": 7,
+      "actual_total": 2354.0,
+      "predicted_total": 3736.411990158617,
+      "wmape_percent": 60.160685179691036,
+      "mae": 202.31178987570385,
+      "bias_percent": 58.72608284446122
+    },
+    {
+      "nationality": "OMAN",
+      "rows": 14,
+      "actual_total": 97383.0,
+      "predicted_total": 85869.42942739373,
+      "wmape_percent": 28.806805130938287,
+      "mae": 2003.780788618688,
+      "bias_percent": -11.822977904363473
+    },
+    {
+      "nationality": "PAKISTAN",
+      "rows": 14,
+      "actual_total": 25672.0,
+      "predicted_total": 33959.474537219234,
+      "wmape_percent": 32.28215385330023,
+      "mae": 591.9624669442311,
+      "bias_percent": 32.28215385330023
+    },
+    {
+      "nationality": "PHILIPPINES",
+      "rows": 14,
+      "actual_total": 36670.0,
+      "predicted_total": 41978.965545160885,
+      "wmape_percent": 14.598473828451311,
+      "mae": 382.375739492364,
+      "bias_percent": 14.477680788548899
+    },
+    {
+      "nationality": "POLAND",
+      "rows": 14,
+      "actual_total": 50017.0,
+      "predicted_total": 49829.20803895289,
+      "wmape_percent": 21.096725183497384,
+      "mae": 753.7106453592776,
+      "bias_percent": -0.3754562669634413
+    },
+    {
+      "nationality": "QATAR",
+      "rows": 14,
+      "actual_total": 57081.0,
+      "predicted_total": 59525.96292004817,
+      "wmape_percent": 28.38492393952419,
+      "mae": 1157.3141738514146,
+      "bias_percent": 4.283321805939209
+    },
+    {
+      "nationality": "ROMANIA",
+      "rows": 12,
+      "actual_total": 27663.0,
+      "predicted_total": 40129.14734612352,
+      "wmape_percent": 56.03008164736653,
+      "mae": 1291.6334571759169,
+      "bias_percent": 45.06433628356837
+    },
+    {
+      "nationality": "RUSSIAN FEDERATION",
+      "rows": 14,
+      "actual_total": 277788.0,
+      "predicted_total": 276632.4661736893,
+      "wmape_percent": 12.546881675081945,
+      "mae": 2489.5522619697595,
+      "bias_percent": -0.4159768695230518
+    },
+    {
+      "nationality": "SAUDI ARABIA",
+      "rows": 14,
+      "actual_total": 206060.0,
+      "predicted_total": 212360.55618771652,
+      "wmape_percent": 35.313727147847516,
+      "mae": 5197.676154346756,
+      "bias_percent": 3.057631848838464
+    },
+    {
+      "nationality": "SOUTH AFRICA",
+      "rows": 13,
+      "actual_total": 20997.0,
+      "predicted_total": 26235.234966499425,
+      "wmape_percent": 36.333946816970425,
+      "mae": 586.8491394737908,
+      "bias_percent": 24.94753996523039
+    },
+    {
+      "nationality": "SOUTH KOREA",
+      "rows": 14,
+      "actual_total": 43452.0,
+      "predicted_total": 48751.04990040479,
+      "wmape_percent": 22.608049015410867,
+      "mae": 701.6892470125949,
+      "bias_percent": 12.195180660049685
+    },
+    {
+      "nationality": "SPAIN",
+      "rows": 14,
+      "actual_total": 50997.0,
+      "predicted_total": 42880.38600723652,
+      "wmape_percent": 19.643827367796714,
+      "mae": 715.5544744825207,
+      "bias_percent": -15.91586562496515
+    },
+    {
+      "nationality": "SWEDEN",
+      "rows": 10,
+      "actual_total": 7948.0,
+      "predicted_total": 9150.762967712486,
+      "wmape_percent": 17.02069455213709,
+      "mae": 135.2804803003856,
+      "bias_percent": 15.132900952597945
+    },
+    {
+      "nationality": "SWITZERLAND",
+      "rows": 14,
+      "actual_total": 30334.0,
+      "predicted_total": 29895.681145954248,
+      "wmape_percent": 16.049285486396357,
+      "mae": 347.7421613888194,
+      "bias_percent": -1.4449754534375714
+    },
+    {
+      "nationality": "TURKEY",
+      "rows": 14,
+      "actual_total": 33313.0,
+      "predicted_total": 31665.809596417377,
+      "wmape_percent": 21.32890984292548,
+      "mae": 507.52140971241175,
+      "bias_percent": -4.944587409067412
+    },
+    {
+      "nationality": "UNITED KINGDOM",
+      "rows": 14,
+      "actual_total": 269412.0,
+      "predicted_total": 261008.93355279957,
+      "wmape_percent": 13.53738096048511,
+      "mae": 2605.094913804439,
+      "bias_percent": -3.119039407005043
+    },
+    {
+      "nationality": "UNITED STATES OF AMERICA",
+      "rows": 14,
+      "actual_total": 162966.0,
+      "predicted_total": 149992.04492867892,
+      "wmape_percent": 14.41206980154963,
+      "mae": 1677.6266909138121,
+      "bias_percent": -7.961142245205176
+    },
+    {
+      "nationality": "UZBEKISTAN",
+      "rows": 11,
+      "actual_total": 22177.0,
+      "predicted_total": 23424.37100802685,
+      "wmape_percent": 25.198810701449013,
+      "mae": 508.0309317509407,
+      "bias_percent": 5.624615628925688
+    }
+  ],
+  "wmape_by_season": [
+    {
+      "season": "autumn",
+      "prediction_type": "reference_aviation_forecast",
+      "rows": 108,
+      "actual_total": 643245.0,
+      "predicted_total": 702214.4611363683,
+      "wmape_percent": 22.0918803363202,
+      "mae": 1315.7862561978045,
+      "bias_percent": 9.16749623181966
+    },
+    {
+      "season": "autumn",
+      "prediction_type": "seasonal_benchmark",
+      "rows": 108,
+      "actual_total": 643245.0,
+      "predicted_total": 591135.0,
+      "wmape_percent": 18.45579833500455,
+      "mae": 1099.2222222222222,
+      "bias_percent": -8.1011123288949
+    },
+    {
+      "season": "autumn",
+      "prediction_type": "observed_p2p_diagnostic",
+      "rows": 108,
+      "actual_total": 643245.0,
+      "predicted_total": 717969.8259120247,
+      "wmape_percent": 20.770137183454754,
+      "mae": 1237.0636011640142,
+      "bias_percent": 11.616852973909575
+    },
+    {
+      "season": "spring",
+      "prediction_type": "reference_aviation_forecast",
+      "rows": 134,
+      "actual_total": 641149.0,
+      "predicted_total": 691966.9121238356,
+      "wmape_percent": 27.63893803836625,
+      "mae": 1322.438618235857,
+      "bias_percent": 7.926068998600279
+    },
+    {
+      "season": "spring",
+      "prediction_type": "seasonal_benchmark",
+      "rows": 134,
+      "actual_total": 641149.0,
+      "predicted_total": 588751.7033492823,
+      "wmape_percent": 22.43100400916742,
+      "mae": 1073.2549096622151,
+      "bias_percent": -8.172405579782188
+    },
+    {
+      "season": "spring",
+      "prediction_type": "observed_p2p_diagnostic",
+      "rows": 134,
+      "actual_total": 641149.0,
+      "predicted_total": 722329.9785042071,
+      "wmape_percent": 23.683301955724275,
+      "mae": 1133.1735347470644,
+      "bias_percent": 12.661796010632015
+    },
+    {
+      "season": "summer",
+      "prediction_type": "reference_aviation_forecast",
+      "rows": 122,
+      "actual_total": 630488.0,
+      "predicted_total": 658914.6055999596,
+      "wmape_percent": 31.7161953469141,
+      "mae": 1639.0721780233753,
+      "bias_percent": 4.508667191121757
+    },
+    {
+      "season": "summer",
+      "prediction_type": "seasonal_benchmark",
+      "rows": 122,
+      "actual_total": 630488.0,
+      "predicted_total": 552735.1578947369,
+      "wmape_percent": 19.433701814267177,
+      "mae": 1004.320966350302,
+      "bias_percent": -12.332168432272011
+    },
+    {
+      "season": "summer",
+      "prediction_type": "observed_p2p_diagnostic",
+      "rows": 122,
+      "actual_total": 630488.0,
+      "predicted_total": 671894.7088338772,
+      "wmape_percent": 33.0621418887409,
+      "mae": 1708.6298127170883,
+      "bias_percent": 6.567406331901197
+    },
+    {
+      "season": "winter",
+      "prediction_type": "reference_aviation_forecast",
+      "rows": 201,
+      "actual_total": 1296387.0,
+      "predicted_total": 1266570.282711076,
+      "wmape_percent": 23.167009436062646,
+      "mae": 1494.1994956113904,
+      "bias_percent": -2.299985828994268
+    },
+    {
+      "season": "winter",
+      "prediction_type": "seasonal_benchmark",
+      "rows": 201,
+      "actual_total": 1296387.0,
+      "predicted_total": 1094127.0,
+      "wmape_percent": 26.343368145468908,
+      "mae": 1699.0646766169154,
+      "bias_percent": -15.601822603898373
+    },
+    {
+      "season": "winter",
+      "prediction_type": "observed_p2p_diagnostic",
+      "rows": 201,
+      "actual_total": 1296387.0,
+      "predicted_total": 1301607.3759022912,
+      "wmape_percent": 19.64678333824587,
+      "mae": 1267.1559458466938,
+      "bias_percent": 0.4026865359102775
+    }
+  ],
+  "feature_list": [
+    "nationality",
+    "calendar_month",
+    "nationality_month",
+    "elapsed_months",
+    "nationality_x_elapsed_months",
+    "shared_p2p",
+    "nationality_x_p2p",
+    "p2p_missing"
+  ],
+  "input_columns": [
+    "month",
+    "nationality",
+    "matching_country_p2p"
+  ],
+  "arrival_comparisons": {
+    "Seasonal benchmark": {
+      "wmape_percent": 22.62567588668136,
+      "mae": 1285.9669306008384,
+      "bias_percent": -11.974086840933627,
+      "actual_total": 3211269.0,
+      "predicted_total": 2826748.861244019,
+      "rows": 565
+    },
+    "Reference aviation forecast": {
+      "wmape_percent": 25.52301270462577,
+      "mae": 1450.641760795945,
+      "bias_percent": 3.3755272937657956,
+      "actual_total": 3211269.0,
+      "predicted_total": 3319666.2615712397,
+      "rows": 565
+    },
+    "Observed P2P conditional prediction": {
+      "wmape_percent": 23.311634897247487,
+      "mae": 1324.954521855735,
+      "bias_percent": 6.3069424938365515,
+      "actual_total": 3211269.0,
+      "predicted_total": 3413801.8891524,
+      "rows": 565
+    }
+  },
+  "guest_day_comparisons": {
+    "Seasonal guest-day benchmark": {
+      "wmape_percent": 19.47021854980728,
+      "mae": 3367.9044585987263,
+      "bias_percent": -11.510701032958758,
+      "actual_total": 5431485.0,
+      "predicted_total": 4806283.0,
+      "rows": 314
+    },
+    "Reference aviation and conversion": {
+      "wmape_percent": 24.533307325410558,
+      "mae": 4243.703526699285,
+      "bias_percent": 5.550249761823961,
+      "actual_total": 5431485.0,
+      "predicted_total": 5732945.983276004,
+      "rows": 314
+    },
+    "Observed P2P and conversion": {
+      "wmape_percent": 23.159176914478568,
+      "mae": 4006.010255520275,
+      "bias_percent": 9.109292008692865,
+      "actual_total": 5431485.0,
+      "predicted_total": 5926254.829058352,
+      "rows": 314
+    }
+  },
+  "guest_day_scoring_period": {
+    "start": "2025-01-01",
+    "end": "2025-07-31"
+  },
+  "training_summary": {
+    "training_rows": 1502,
+    "nationalities": 45,
+    "encoded_features": 679,
+    "ridge_alpha": 1.0,
+    "solver_iterations": 95,
+    "iteration_limit": 20000,
+    "raw_negative_training_predictions": 6,
+    "observed_passenger_responses": 33,
+    "nonpositive_observed_responses": 0,
+    "local_conversion_factors": 42,
+    "pooled_conversion_factors": 3
+  },
+  "known_limitations": [
+    "The seasonal benchmark outperformed the regression on this final evaluation.",
+    "Observed same-month P2P predictions are conditional diagnostics, not origin-available forecasts.",
+    "Only 33 of 45 nationalities have matching-country passenger responses; this is not a flow allocation.",
+    "Aviation and hotel associations do not establish causal flight effects.",
+    "Recorded guest-days are not independently verified occupied guest nights or measured length of stay.",
+    "The fixed engine uses 2024 aviation and does not auto-refresh; later than February 2026 is beyond the scored horizon.",
+    "Bounds remain null; sensitivity cases are user assumptions, not confidence intervals.",
+    "Final outcomes have now been scored; subsequent decisions using them consume the holdout."
+  ]
+}
