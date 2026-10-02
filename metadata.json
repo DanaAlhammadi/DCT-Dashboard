@@ -1,6 +1,6 @@
 {
   "name": "AeroStay Abu Dhabi",
-  "description": "Flight-to-Hotel Decision Studio: See how flight changes could affect Abu Dhabi hotel demand.",
+  "description": "SILA | صِلَة — Flight-to-Hotel Decision Intelligence. An explainable scenario-planning platform that helps DCT explore how changes in airline capacity, passenger movement, source markets, and seasonality could affect hotel demand in Abu Dhabi.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

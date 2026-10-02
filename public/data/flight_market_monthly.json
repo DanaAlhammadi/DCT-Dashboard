@@ -1,0 +1,7 @@
+{
+  "description": "Monthly flight capacity and passenger records by departure market",
+  "recordsCount": 0,
+  "data": [],
+  "status": "AWAITING_STRUCTURED_INGESTION",
+  "note": "Aviation data source: Zayed International Airport (AUH) departure records."
+}

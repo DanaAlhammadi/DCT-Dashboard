@@ -4,7 +4,9 @@ export function exportScenarioToCSV(result: ScenarioResult, route: RouteInfo, ba
   const lines: string[] = [];
 
   // Header section
-  lines.push('AEROSTAY ABU DHABI - FLIGHT-TO-HOTEL DECISION STUDIO');
+  lines.push('SILA | صِلَة - FLIGHT-TO-HOTEL DECISION INTELLIGENCE');
+  lines.push('منصة ذكاء ربط الرحلات بالطلب الفندقي');
+  lines.push('From flights to stays. From data to decisions.');
   lines.push(`Scenario Name,"${result.input.scenarioName}"`);
   lines.push(`Export Timestamp,"${new Date().toISOString()}"`);
   lines.push(`Route,"${route.routeCode} (${route.departureCity}, ${route.departureCountry} to Abu Dhabi AUH)"`);
@@ -24,7 +26,7 @@ export function exportScenarioToCSV(result: ScenarioResult, route: RouteInfo, ba
   lines.push('');
 
   // Monthly Breakdown
-  lines.push('MONTHLY IMPACT FORECAST');
+  lines.push('MONTHLY IMPACT FORECAST (MONTHLY NEW HOTEL ARRIVALS)');
   lines.push('Month,Baseline Seats,Scenario Seats,Baseline Guests,Scenario Guests,Additional Guests,Confidence Min,Confidence Max,Baseline Guest Nights,Scenario Guest Nights,Event');
   result.monthlyBreakdown.forEach(m => {
     lines.push(
@@ -44,7 +46,7 @@ export function exportScenarioToCSV(result: ScenarioResult, route: RouteInfo, ba
   const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(lines.join('\n'));
   const link = document.createElement('a');
   link.setAttribute('href', csvContent);
-  link.setAttribute('download', `AeroStay_Scenario_${result.input.routeId}_${result.input.startMonth}.csv`);
+  link.setAttribute('download', `SILA_Decision_Brief_${result.input.routeId}_${result.input.startMonth}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -53,10 +55,15 @@ export function exportScenarioToCSV(result: ScenarioResult, route: RouteInfo, ba
 export function exportScenarioToJSON(result: ScenarioResult, route: RouteInfo, baseline: BaselineFlightData): void {
   const exportData = {
     metadata: {
-      application: 'AeroStay Abu Dhabi',
-      subtitle: 'Flight-to-Hotel Decision Studio',
+      application: 'SILA | صِلَة',
+      subtitle: 'Flight-to-Hotel Decision Intelligence',
+      arabicSubtitle: 'منصة ذكاء ربط الرحلات بالطلب الفندقي',
+      tagline: 'From flights to stays. From data to decisions.',
+      arabicTagline: 'من الرحلات إلى الإقامات، ومن البيانات إلى القرار',
+      documentTitle: 'SILA Scenario Decision Brief',
+      arabicDocumentTitle: 'ملخص قرار صِلَة',
       exportDate: new Date().toISOString(),
-      modelVersion: 'v2.4-AeroStay-Hybrid',
+      modelVersion: 'v2.4-SILA-Hybrid',
       disclaimer: 'Illustrative demo values — not official DCT results.',
     },
     route,
@@ -67,7 +74,7 @@ export function exportScenarioToJSON(result: ScenarioResult, route: RouteInfo, b
   const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportData, null, 2));
   const link = document.createElement('a');
   link.setAttribute('href', dataStr);
-  link.setAttribute('download', `AeroStay_Scenario_${result.input.routeId}_${Date.now()}.json`);
+  link.setAttribute('download', `SILA_Scenario_${result.input.routeId}_${Date.now()}.json`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

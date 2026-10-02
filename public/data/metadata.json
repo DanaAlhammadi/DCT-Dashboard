@@ -1,0 +1,23 @@
+{
+  "appName": "SILA | صِلَة",
+  "englishName": "SILA",
+  "arabicName": "صِلَة",
+  "subtitle": "Flight-to-Hotel Decision Intelligence",
+  "arabicSubtitle": "منصة ذكاء ربط الرحلات بالطلب الفندقي",
+  "primaryTagline": "From flights to stays. From data to decisions.",
+  "arabicTagline": "من الرحلات إلى الإقامات، ومن البيانات إلى القرار",
+  "productDescription": "SILA is an explainable scenario-planning platform that helps DCT explore how changes in airline capacity, passenger movement, source markets, and seasonality could affect hotel demand in Abu Dhabi.",
+  "appVersion": "3.1.0-sila",
+  "mode": "EDA_MODE",
+  "analyticalTarget": "Monthly New Hotel Arrivals by nationality",
+  "reportReference": "DCT_EDA_Report.pdf",
+  "reportDate": "2026-09-24",
+  "lastUpdated": "2026-09-27",
+  "statusBanner": "EDA MODE — Current analytical focus: Monthly New Hotel Arrivals by nationality. Predictive model validation is still pending.",
+  "dataStatus": {
+    "hotelDataCoverage": "2022-01 to 2025-07 (observed daily records)",
+    "flightDataCoverage": "2022-01 to 2026-02 (monthly-stamped 2022, daily-dated 2023+)",
+    "nationalitiesRecorded": 45,
+    "departureMarketsRecorded": 33
+  }
+}

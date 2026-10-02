@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScenarioInput, BaselineFlightData, RouteInfo } from '../../types';
 import { DataStatusChip } from '../common/DataStatusChip';
+import { InfoTooltip } from '../common/InfoTooltip';
 import { Sliders, AlertTriangle, Calendar, RefreshCw, Zap, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface Props {
@@ -63,7 +64,7 @@ export const ScenarioControls: React.FC<Props> = ({
             onClick={() => onApplyPreset('lf_85')}
             className="text-[11px] font-semibold py-1.5 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 transition-colors text-center"
           >
-            85% Load Factor
+            85% Seat Occupancy
           </button>
           <button
             id="preset-japan-new-btn"
@@ -205,7 +206,15 @@ export const ScenarioControls: React.FC<Props> = ({
       <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs font-bold text-slate-800 block">Passenger Load Factor</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-bold text-slate-800">Seat Occupancy Rate</span>
+              <InfoTooltip
+                title="Flight Seat Occupancy Rate"
+                businessTerm="The percentage of aircraft seats expected to be occupied by passengers."
+                technicalDefinition="Passenger Load Factor = Arriving Passengers ÷ Scheduled Airline Seats. Expressed as a percentage."
+                position="top"
+              />
+            </div>
             <span className="text-[11px] text-slate-500">
               Baseline: {(baseline.historicalLoadFactor * 100).toFixed(0)}%
             </span>

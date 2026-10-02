@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ScenarioInput, BaselineFlightData } from '../../types';
 import { DataStatusChip } from '../common/DataStatusChip';
+import { InfoTooltip } from '../common/InfoTooltip';
 import { ChevronDown, ChevronUp, SlidersHorizontal, Info, Sparkles } from 'lucide-react';
 import { MOCK_EVENTS } from '../../data/mockData';
 
@@ -60,16 +61,24 @@ export const AdvancedAssumptions: React.FC<Props> = ({
       {isOpen && (
         <div className="p-5 border-t border-slate-200 bg-slate-50/40 space-y-4 animate-in slide-in-from-top-2 duration-150">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Inbound Visitor Share */}
+            {/* Visiting Tourists Share (Formerly Inbound Visitor Share) */}
             <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-800">
-                  Inbound Visitor Share
-                </label>
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs font-bold text-slate-800">
+                    Visiting Tourists Share
+                  </label>
+                  <InfoTooltip
+                    title="Visiting Tourists Share"
+                    businessTerm="The percentage of direct arrivals who are tourists or business visitors, excluding returning UAE residents."
+                    technicalDefinition="Inbound Visitor Share = (Direct Arrivals − Returning UAE Residents) ÷ Direct Arrivals."
+                    position="top"
+                  />
+                </div>
                 <DataStatusChip status="Estimated" size="sm" />
               </div>
               <p className="text-[11px] text-slate-500">
-                P2P arrivals who are non-resident tourists (excludes returning UAE residents).
+                Direct arrivals who are non-resident tourists (excludes returning UAE residents).
               </p>
               <div className="flex items-center gap-3">
                 <input
@@ -87,12 +96,20 @@ export const AdvancedAssumptions: React.FC<Props> = ({
               </div>
             </div>
 
-            {/* Hotel Capture Rate */}
+            {/* Hotel Stays Share (Formerly Hotel-Capture Rate) */}
             <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-800">
-                  Hotel-Capture Rate
-                </label>
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs font-bold text-slate-800">
+                    Hotel Stays Share
+                  </label>
+                  <InfoTooltip
+                    title="Hotel Stays Share"
+                    businessTerm="The portion of inbound visitors who book commercial hotel accommodations."
+                    technicalDefinition="Hotel Capture Rate: Proportion of international tourists choosing licensed hotel establishments versus staying with family/friends (VFR) or short-term rentals."
+                    position="top"
+                  />
+                </div>
                 <DataStatusChip status="Estimated" size="sm" />
               </div>
               <p className="text-[11px] text-slate-500">
@@ -114,12 +131,20 @@ export const AdvancedAssumptions: React.FC<Props> = ({
               </div>
             </div>
 
-            {/* Average Length of Stay (ALOS) */}
+            {/* Average Hotel Stay Duration (Formerly Average Length of Stay / ALOS) */}
             <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-800">
-                  Average Length of Stay (ALOS)
-                </label>
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs font-bold text-slate-800">
+                    Average Hotel Stay Duration
+                  </label>
+                  <InfoTooltip
+                    title="Average Hotel Stay Duration"
+                    businessTerm="The average number of nights hotel guests stay in Abu Dhabi."
+                    technicalDefinition="Average Length of Stay (ALOS) = Total Hotel Guest Nights ÷ Total Hotel Guest Check-ins."
+                    position="top"
+                  />
+                </div>
                 <DataStatusChip status={baseline.alosStatus === 'DIRECT_DATA' ? 'Observed' : 'Assumed'} size="sm" />
               </div>
               <p className="text-[11px] text-slate-500">
@@ -142,12 +167,20 @@ export const AdvancedAssumptions: React.FC<Props> = ({
               </div>
             </div>
 
-            {/* Transfer & Transit Share */}
+            {/* Connecting Passenger Share (Formerly Transfer Leakage Share) */}
             <div className="p-3.5 rounded-xl border border-slate-200 bg-white space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-800">
-                  Transfer Leakage Share
-                </label>
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs font-bold text-slate-800">
+                    Connecting Passenger Share
+                  </label>
+                  <InfoTooltip
+                    title="Connecting Passenger Share"
+                    businessTerm="The percentage of arriving travelers switching flights who do not visit Abu Dhabi."
+                    technicalDefinition="Transfer & Transit Leakage: Passengers connecting onward through Zayed International Airport (AUH) without entering the commercial lodging economy."
+                    position="top"
+                  />
+                </div>
                 <DataStatusChip status="Derived" size="sm" />
               </div>
               <p className="text-[11px] text-slate-500">

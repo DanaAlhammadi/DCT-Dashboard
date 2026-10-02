@@ -1,0 +1,10 @@
+{
+  "modelVersion": null,
+  "isEvaluated": false,
+  "status": "VALIDATION_PENDING",
+  "wmape": null,
+  "mae": null,
+  "r2": null,
+  "validationWindow": null,
+  "message": "Model not yet trained. Accuracy benchmarks will be computed once out-of-sample temporal holdout testing is completed."
+}

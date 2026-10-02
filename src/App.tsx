@@ -4,54 +4,46 @@ import { WelcomeModal } from './components/common/WelcomeModal';
 import { GlossaryDrawer } from './components/common/GlossaryDrawer';
 import { DecisionBriefModal } from './components/export/DecisionBriefModal';
 import { DecisionTypeSelector } from './components/planner/DecisionTypeSelector';
+import { PlannerHeaderSteps } from './components/planner/PlannerHeaderSteps';
 import { BaselineSelector } from './components/planner/BaselineSelector';
 import { ScenarioControls } from './components/planner/ScenarioControls';
 import { AdvancedAssumptions } from './components/planner/AdvancedAssumptions';
 import { ValidationPanel } from './components/planner/ValidationPanel';
 import { KPIGrid } from './components/planner/KPIGrid';
-import { SupportStatusBanner } from './components/common/SupportStatusBanner';
-import { ConversionChain } from './components/planner/ConversionChain';
 import { BaselineScenarioChart } from './components/planner/BaselineScenarioChart';
-import { MonthlyImpactChart } from './components/planner/MonthlyImpactChart';
 import { DecisionSummary } from './components/planner/DecisionSummary';
-import { WarningsPanel } from './components/planner/WarningsPanel';
+import { TechnicalDetailsDrawer } from './components/planner/TechnicalDetailsDrawer';
 import { MarketInsightsTab } from './components/insights/MarketInsightsTab';
 import { CompareOpportunitiesTab } from './components/compare/CompareOpportunitiesTab';
 import { TrustDataTab } from './components/trust/TrustDataTab';
+import { AskAeroStayDrawer } from './components/chat/AskAeroStayDrawer';
+import { DataIntegrationCheck } from './components/dev/DataIntegrationCheck';
 
-import { 
-  MOCK_ROUTES, 
-  MOCK_BASELINES, 
-  INITIAL_SAVED_SCENARIOS 
-} from './data/mockData';
-import { 
-  ScenarioInput, 
-  BaselineFlightData, 
-  RouteInfo, 
-  ScenarioResult, 
-  SavedScenario, 
-  DecisionType 
-} from './types';
-import { validateScenario } from './services/validationService';
-import { runSimulation } from './services/simulationService';
-import { 
-  Play, 
-  RotateCcw, 
-  Bookmark, 
-  Check, 
-  Layers, 
-  ArrowRight, 
-  Info, 
-  Sparkles,
-  AlertCircle
+import { DataService } from './services/dataService';
+import { ScenarioService } from './services/scenarioService';
+import {
+  ScenarioInput,
+  BaselineFlightData,
+  RouteInfo,
+  ScenarioResult,
+  SavedScenario,
+} from './types/dashboard';
+
+import {
+  Play,
+  RotateCcw,
+  Bookmark,
+  BookmarkCheck,
 } from 'lucide-react';
 
-const LOCAL_STORAGE_KEY = 'aerostay_saved_scenarios_v1';
 const WELCOME_SEEN_KEY = 'aerostay_welcome_seen_v1';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('planner');
   const [selectedRouteId, setSelectedRouteId] = useState<string>('DEL-AUH');
+
+  // Load all routes from DataService
+  const allRoutes = useMemo(() => DataService.getRoutes(), []);
 
   // Scenario Input State (Defaulting to India +2 Weekly flights example)
   const [scenarioInput, setScenarioInput] = useState<ScenarioInput>({
@@ -70,21 +62,15 @@ export default function App() {
   // UI Modals & Drawers
   const [isWelcomeOpen, setIsWelcomeOpen] = useState<boolean>(false);
   const [isGlossaryOpen, setIsGlossaryOpen] = useState<boolean>(false);
+  const [isDataCheckOpen, setIsDataCheckOpen] = useState<boolean>(false);
   const [isDecisionBriefOpen, setIsDecisionBriefOpen] = useState<boolean>(false);
+  const [isTechnicalDrawerOpen, setIsTechnicalDrawerOpen] = useState<boolean>(false);
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
 
-  // Saved Scenarios in localStorage
+  // Saved Scenarios via ScenarioService (max 3 for comparison)
   const [savedScenarios, setSavedScenarios] = useState<SavedScenario[]>(() => {
-    try {
-      const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch (e) {
-      console.warn('Failed to read localStorage:', e);
-    }
-    return INITIAL_SAVED_SCENARIOS;
+    return ScenarioService.getSavedScenarios();
   });
 
   // Check if first-time user
@@ -106,24 +92,24 @@ export default function App() {
     } catch (e) {}
   };
 
-  // Selected route and baseline
+  // Selected route and baseline via DataService
   const selectedRoute = useMemo<RouteInfo>(() => {
-    return MOCK_ROUTES.find((r) => r.id === selectedRouteId) || MOCK_ROUTES[0];
+    return DataService.getRouteById(selectedRouteId);
   }, [selectedRouteId]);
 
   const currentBaseline = useMemo<BaselineFlightData>(() => {
-    return MOCK_BASELINES[selectedRouteId] || MOCK_BASELINES['DEL-AUH'];
+    return DataService.getBaseline(selectedRouteId);
   }, [selectedRouteId]);
 
-  // Validation
+  // Validation via ScenarioService
   const validation = useMemo(() => {
-    return validateScenario(scenarioInput, currentBaseline, selectedRoute);
+    return ScenarioService.validate(scenarioInput, currentBaseline, selectedRoute);
   }, [scenarioInput, currentBaseline, selectedRoute]);
 
-  // Simulation Result State
+  // Simulation Result State via ScenarioService
   const [scenarioResult, setScenarioResult] = useState<ScenarioResult>(() => {
-    const initBaseline = MOCK_BASELINES['DEL-AUH'];
-    const initRoute = MOCK_ROUTES[0];
+    const initRoute = DataService.getRouteById('DEL-AUH');
+    const initBaseline = DataService.getBaseline('DEL-AUH');
     const initInput: ScenarioInput = {
       scenarioName: 'India: +2 Weekly Flights (DEL/BOM)',
       routeId: 'DEL-AUH',
@@ -136,14 +122,14 @@ export default function App() {
       customLoadFactor: null,
       assumedWeeklyFrequencyChange: 2,
     };
-    return runSimulation(initInput, initBaseline, initRoute);
+    return ScenarioService.simulate(initInput, initBaseline, initRoute);
   });
 
   // Update input when route changes
   const handleSelectRoute = (routeId: string) => {
     setSelectedRouteId(routeId);
-    const r = MOCK_ROUTES.find((item) => item.id === routeId);
-    const b = MOCK_BASELINES[routeId];
+    const r = DataService.getRouteById(routeId);
+    const b = DataService.getBaseline(routeId);
     if (r && b) {
       setScenarioInput((prev) => ({
         ...prev,
@@ -168,10 +154,10 @@ export default function App() {
 
     setIsCalculating(true);
     setTimeout(() => {
-      const res = runSimulation(scenarioInput, currentBaseline, selectedRoute);
+      const res = ScenarioService.simulate(scenarioInput, currentBaseline, selectedRoute);
       setScenarioResult(res);
       setIsCalculating(false);
-    }, 450);
+    }, 350);
   };
 
   // Reset to Baseline
@@ -195,24 +181,25 @@ export default function App() {
     });
   };
 
-  // Save Scenario Action
+  // Save Scenario Action (Max 3 saved scenarios for Compare Opportunities)
   const handleSaveScenario = () => {
     if (!scenarioResult) return;
 
     const newSaved: SavedScenario = {
       id: 'scen-' + Date.now(),
       name: scenarioInput.scenarioName || `${selectedRoute.departureCity} ${scenarioResult.totalSeats.diff >= 0 ? '+' : ''}${scenarioResult.totalSeats.diff} Seats`,
-      savedAt: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       routeLabel: `${selectedRoute.routeCode} (${selectedRoute.departureCountry})`,
       marketLabel: selectedRoute.modelledSourceMarket,
       dateRange: `${scenarioInput.startMonth} to ${scenarioInput.endMonth}`,
       addedSeats: scenarioResult.totalSeats.diff,
       addedGuests: scenarioResult.hotelGuests.diff,
-      addedNights: scenarioResult.guestNights.diff,
+      addedNights: null,
       guestsPer1kSeats: scenarioResult.guestsPer1kSeats.scenario,
       confidenceScore: scenarioResult.confidenceScore,
       supportLevel: scenarioResult.supportLevel,
       mainUncertainty: scenarioResult.decisionSummary.mainUncertainty,
+      recommendation: scenarioResult.decisionSummary.recommendedAction,
       badges: [
         scenarioResult.supportLevel === 'SUPPORTED' ? 'Supported by history' : 'Exploratory analogue',
         `${scenarioResult.guestsPer1kSeats.scenario} guests/1k seats`,
@@ -221,13 +208,10 @@ export default function App() {
       result: scenarioResult,
     };
 
-    const updated = [newSaved, ...savedScenarios].slice(0, 8); // Keep up to 8
+    const updated = ScenarioService.saveScenario(newSaved);
     setSavedScenarios(updated);
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-    } catch (e) {}
 
-    setSaveSuccessMsg('Scenario saved to portfolio');
+    setSaveSuccessMsg('Saved to comparison portfolio (max 3)');
     setTimeout(() => setSaveSuccessMsg(null), 3000);
   };
 
@@ -286,37 +270,25 @@ export default function App() {
     if (scen.result) {
       setScenarioResult(scen.result);
     } else {
-      const b = MOCK_BASELINES[scen.input.routeId] || currentBaseline;
-      const r = MOCK_ROUTES.find((item) => item.id === scen.input.routeId) || selectedRoute;
-      setScenarioResult(runSimulation(scen.input, b, r));
+      const b = DataService.getBaseline(scen.input.routeId);
+      const r = DataService.getRouteById(scen.input.routeId);
+      setScenarioResult(ScenarioService.simulate(scen.input, b, r));
     }
     setActiveTab('planner');
   };
 
   const handleDeleteSaved = (id: string) => {
-    const updated = savedScenarios.filter((s) => s.id !== id);
+    const updated = ScenarioService.deleteScenario(id);
     setSavedScenarios(updated);
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-    } catch (e) {}
   };
 
   const handleDuplicateSaved = (scen: SavedScenario) => {
-    const duplicated: SavedScenario = {
-      ...scen,
-      id: 'scen-' + Date.now(),
-      name: `${scen.name} (Copy)`,
-      savedAt: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-    };
-    const updated = [duplicated, ...savedScenarios].slice(0, 8);
+    const updated = ScenarioService.duplicateScenario(scen);
     setSavedScenarios(updated);
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-    } catch (e) {}
   };
 
   return (
-    <div className="min-h-screen bg-slate-100/70 text-slate-900 flex flex-col selection:bg-teal-500 selection:text-white" id="aerostay-app-root">
+    <div className="min-h-screen bg-slate-100/70 text-slate-900 flex flex-col selection:bg-teal-700 selection:text-white" id="aerostay-app-root">
       {/* Global Header */}
       <AppHeader
         activeTab={activeTab}
@@ -325,6 +297,7 @@ export default function App() {
         onOpenSaved={() => setActiveTab('compare')}
         onOpenGlossary={() => setIsGlossaryOpen(true)}
         onExportBrief={() => setIsDecisionBriefOpen(true)}
+        onOpenDataCheck={() => setIsDataCheckOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -332,7 +305,10 @@ export default function App() {
         {/* Tab 1: Scenario Planner */}
         {activeTab === 'planner' && (
           <div className="space-y-6 animate-in fade-in duration-150">
-            {/* Step 1: Planning Question Cards */}
+            {/* Simple Three-Step Explanation & Mandatory Visible Status Banner */}
+            <PlannerHeaderSteps />
+
+            {/* Step 1 Question Lever Selector */}
             <DecisionTypeSelector
               selectedType={scenarioInput.decisionType}
               onSelectType={(type) => {
@@ -347,19 +323,19 @@ export default function App() {
               }}
             />
 
-            {/* Calm Two-Column Desktop Layout */}
+            {/* Two-Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* Left Column: Setup & Inputs (5 Cols on LG) */}
               <div className="lg:col-span-5 space-y-5" id="planner-inputs-column">
-                {/* Section A: Select the Baseline */}
+                {/* 1. Baseline Selection */}
                 <BaselineSelector
-                  routes={MOCK_ROUTES}
+                  routes={allRoutes}
                   selectedRoute={selectedRoute}
                   baseline={currentBaseline}
                   onSelectRoute={handleSelectRoute}
                 />
 
-                {/* Section B: Define the Change */}
+                {/* 2. Scenario Controls */}
                 <ScenarioControls
                   input={scenarioInput}
                   baseline={currentBaseline}
@@ -368,24 +344,24 @@ export default function App() {
                   onApplyPreset={handleApplyPreset}
                 />
 
-                {/* Section C: Advanced Assumptions */}
+                {/* 3. Advanced Assumptions Accordion */}
                 <AdvancedAssumptions
                   input={scenarioInput}
                   baseline={currentBaseline}
                   onChangeInput={handleInputUpdate}
                 />
 
-                {/* Section D: Immediate Validation */}
+                {/* Validation Panel */}
                 <ValidationPanel validation={validation} />
 
-                {/* Section E: Primary Actions */}
-                <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-wrap items-center gap-2.5">
+                {/* 4. Run Scenario Button */}
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-wrap items-center gap-2.5">
                   <button
                     id="run-scenario-main-btn"
                     type="button"
                     disabled={!validation.isValid || isCalculating}
                     onClick={handleRunScenario}
-                    title={!validation.isValid ? 'Disabled: Please fix blocking issues above' : 'Simulate aviation to hotel demand impact'}
+                    title={!validation.isValid ? 'Please fix blocking issues above' : 'Simulate aviation to hotel demand impact'}
                     className={`flex-1 py-3 px-5 rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all ${
                       !validation.isValid || isCalculating
                         ? 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
@@ -395,7 +371,7 @@ export default function App() {
                     {isCalculating ? (
                       <>
                         <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                        <span>Calculating aviation & hotel impact…</span>
+                        <span>Calculating hotel impact…</span>
                       </>
                     ) : (
                       <>
@@ -419,7 +395,7 @@ export default function App() {
                     id="save-scenario-btn"
                     type="button"
                     onClick={handleSaveScenario}
-                    title="Save scenario to portfolio"
+                    title="Save scenario for comparison (up to 3)"
                     className="py-3 px-4 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors"
                   >
                     <Bookmark className="w-4 h-4 text-amber-500" />
@@ -434,37 +410,19 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Right Column: Decision Results & Visual Story (7 Cols on LG) */}
-              <div className="lg:col-span-7 space-y-6" id="planner-results-column">
-                {/* A. 4 Priority KPI Cards */}
-                <KPIGrid result={scenarioResult} />
-
-                {/* B. Support Status Banner */}
-                <SupportStatusBanner
-                  level={scenarioResult.supportLevel}
-                  customExplanation={scenarioResult.supportExplanation}
+              {/* Right Column: Four Main Outputs (Height reduced by 30%) + Executive Decision Support */}
+              <div className="lg:col-span-7 space-y-4" id="planner-results-column">
+                {/* 1. Four Main Outputs (Height reduced by 30%, expandable drawer trigger integrated) */}
+                <KPIGrid
+                  result={scenarioResult}
+                  onOpenTechnicalDrawer={() => setIsTechnicalDrawerOpen(true)}
                 />
 
-                {/* C. Transparent Conversion Chain */}
-                <ConversionChain stages={scenarioResult.conversionStages} />
-
-                {/* D. Comparative Grouped Bar Chart */}
-                <BaselineScenarioChart result={scenarioResult} />
-
-                {/* E. Monthly Trajectory Line Chart */}
-                <MonthlyImpactChart
-                  data={scenarioResult.monthlyBreakdown}
-                  supportLevel={scenarioResult.supportLevel}
-                />
-
-                {/* F. "What this means for DCT" */}
+                {/* 2. Plain-language Executive Recommendation ("What this means for DCT") */}
                 <DecisionSummary summary={scenarioResult.decisionSummary} />
 
-                {/* G. Important Warnings */}
-                <WarningsPanel
-                  topWarnings={scenarioResult.topWarnings}
-                  allWarnings={scenarioResult.allWarnings}
-                />
+                {/* 3. Baseline-versus-Scenario Comparative Chart */}
+                <BaselineScenarioChart result={scenarioResult} />
               </div>
             </div>
           </div>
@@ -491,6 +449,12 @@ export default function App() {
         )}
       </main>
 
+      {/* Floating Bottom-Right "Ask AeroStay" Chatbot Button & Drawer */}
+      <AskAeroStayDrawer
+        currentResult={scenarioResult}
+        currentRoute={selectedRoute}
+      />
+
       {/* Global Drawers & Modals */}
       <WelcomeModal
         isOpen={isWelcomeOpen}
@@ -506,9 +470,24 @@ export default function App() {
         onClose={() => setIsGlossaryOpen(false)}
       />
 
+      {/* Data Integration Check Dev Modal */}
+      <DataIntegrationCheck
+        isOpen={isDataCheckOpen}
+        onClose={() => setIsDataCheckOpen(false)}
+      />
+
       <DecisionBriefModal
         isOpen={isDecisionBriefOpen}
         onClose={() => setIsDecisionBriefOpen(false)}
+        result={scenarioResult}
+        route={selectedRoute}
+        baseline={currentBaseline}
+      />
+
+      {/* Expandable Technical Details Drawer */}
+      <TechnicalDetailsDrawer
+        isOpen={isTechnicalDrawerOpen}
+        onClose={() => setIsTechnicalDrawerOpen(false)}
         result={scenarioResult}
         route={selectedRoute}
         baseline={currentBaseline}

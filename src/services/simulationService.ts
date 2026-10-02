@@ -92,14 +92,12 @@ export function runSimulation(
   const baselineGuests = Math.round(baselineVisitors * baseline.hotelCaptureRate);
   const scenarioGuests = Math.round(scenarioVisitors * hotelCaptureRate);
 
-  // 7. Hotel Guest Nights (ALOS)
-  const alos = input.alosOverride !== undefined && input.alosOverride !== null
-    ? input.alosOverride
-    : baseline.averageLengthOfStay;
-
-  const hasALOS = alos > 0;
-  const baselineNights = hasALOS ? Math.round(baselineGuests * alos) : null;
-  const scenarioNights = hasALOS ? Math.round(scenarioGuests * alos) : null;
+  // 7. Hotel Guest Nights (ALOS) - PENDING IN EDA MODE
+  // Note: Guest nights are unconfirmed until the stay-duration component is validated.
+  const baselineNights: number | null = null;
+  const scenarioNights: number | null = null;
+  const nightsDiff: number | null = null;
+  const nightsPct: number | null = null;
 
   // Calculate Differences
   const seatsDiff = scenarioMonthlySeats - baselineMonthlySeats;
@@ -107,14 +105,12 @@ export function runSimulation(
   const p2pDiff = scenarioP2P - baselineP2P;
   const visitorsDiff = scenarioVisitors - baselineVisitors;
   const guestsDiff = scenarioGuests - baselineGuests;
-  const nightsDiff = baselineNights !== null && scenarioNights !== null ? scenarioNights - baselineNights : null;
 
   const seatsPct = baselineMonthlySeats > 0 ? (seatsDiff / baselineMonthlySeats) * 100 : 100;
   const paxPct = baselinePax > 0 ? (paxDiff / baselinePax) * 100 : 100;
   const p2pPct = baselineP2P > 0 ? (p2pDiff / baselineP2P) * 100 : 100;
   const visitorsPct = baselineVisitors > 0 ? (visitorsDiff / baselineVisitors) * 100 : 100;
   const guestsPct = baselineGuests > 0 ? (guestsDiff / baselineGuests) * 100 : 100;
-  const nightsPct = baselineNights && baselineNights > 0 && nightsDiff !== null ? (nightsDiff / baselineNights) * 100 : 100;
 
   // Efficiency ratios per 1,000 seats
   const baseGuestsPer1k = baselineMonthlySeats > 0 ? Math.round((baselineGuests / baselineMonthlySeats) * 1000) : 0;
@@ -210,21 +206,16 @@ export function runSimulation(
     },
     {
       id: 'nights',
-      name: 'Hotel Guest Nights',
-      baselineValue: baselineNights ?? 0,
-      scenarioValue: scenarioNights ?? 0,
-      changeValue: nightsDiff ?? 0,
-      percentChange: nightsPct ?? 0,
+      name: 'Hotel Guest Nights (Component Pending)',
+      baselineValue: 0,
+      scenarioValue: 0,
+      changeValue: 0,
+      percentChange: 0,
       unit: 'Guest Nights',
-      status: baseline.alosStatus === 'DIRECT_DATA' ? 'Derived' : 'Assumed',
-      formula: hasALOS ? `Hotel Guests × ${alos.toFixed(1)} Nights (Average Length of Stay)` : 'Unavailable in direct dataset',
-      explanation: hasALOS
-        ? `Each hotel guest generates an average of ${alos.toFixed(1)} room-nights across their stay.`
-        : 'Guest nights are not yet directly supported by the available dataset.',
-      uncertaintyRange: {
-        min: scenarioNights ? Math.round(scenarioNights * (supportLevel === 'OUT_OF_SUPPORT' ? 0.70 : 0.88)) : 0,
-        max: scenarioNights ? Math.round(scenarioNights * (supportLevel === 'OUT_OF_SUPPORT' ? 1.30 : 1.12)) : 0,
-      },
+      status: 'Unknown',
+      formula: 'Pending linked stay-duration dataset',
+      explanation: 'Guest Nights: Not yet available — stay-duration component pending.',
+      uncertaintyRange: { min: 0, max: 0 },
     },
   ];
 
@@ -259,8 +250,8 @@ export function runSimulation(
       confidenceMax: Math.round(scenM * (1 + uncertaintySpread)),
       baselineSeats: baselineMonthlySeats,
       scenarioSeats: scenarioMonthlySeats,
-      baselineNights: baselineNights ? Math.round(baselineNights * effectiveWeight) : 0,
-      scenarioNights: scenarioNights ? Math.round(scenarioNights * effectiveWeight) : 0,
+      baselineNights: null,
+      scenarioNights: null,
       eventName: matchedEvent?.name,
     };
   });
@@ -321,11 +312,11 @@ export function runSimulation(
     inboundVisitors: { baseline: baselineVisitors, scenario: scenarioVisitors, diff: visitorsDiff, pct: visitorsPct },
     hotelGuests: { baseline: baselineGuests, scenario: scenarioGuests, diff: guestsDiff, pct: guestsPct },
     guestNights: {
-      baseline: baselineNights,
-      scenario: scenarioNights,
-      diff: nightsDiff,
-      pct: nightsPct,
-      statusNote: baseline.alosStatus === 'DEMO_ASSUMPTION' ? 'Demo assumption only' : 'Derived from ALOS',
+      baseline: null,
+      scenario: null,
+      diff: null,
+      pct: null,
+      statusNote: 'Guest Nights: Not yet available — stay-duration component pending.',
     },
     guestsPer1kSeats: { baseline: baseGuestsPer1k, scenario: scenGuestsPer1k },
     nightsPer1kSeats: { baseline: baseNightsPer1k, scenario: scenNightsPer1k },

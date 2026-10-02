@@ -1,6 +1,7 @@
 import React from 'react';
 import { RouteInfo, BaselineFlightData } from '../../types';
 import { DataStatusChip } from '../common/DataStatusChip';
+import { InfoTooltip } from '../common/InfoTooltip';
 import { Plane, MapPin, Building, ArrowRight, Info, AlertCircle } from 'lucide-react';
 
 interface Props {
@@ -141,7 +142,15 @@ export const BaselineSelector: React.FC<Props> = ({
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
             <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span>Total PAX</span>
+              <span className="flex items-center gap-1 font-medium text-slate-700">
+                <span>Total Passengers</span>
+                <InfoTooltip
+                  title="Total Passengers"
+                  businessTerm="All travelers flying on this inbound route into Abu Dhabi."
+                  technicalDefinition="Total PAX: Aviation passenger count (revenue + non-revenue passengers deplaning)."
+                  position="top"
+                />
+              </span>
               <DataStatusChip status={baseline.totalPax > 0 ? 'Observed' : 'Unknown'} size="sm" />
             </div>
             <p className="text-sm font-bold text-slate-900 font-mono">
@@ -151,7 +160,15 @@ export const BaselineSelector: React.FC<Props> = ({
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
             <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span>Total P2P</span>
+              <span className="flex items-center gap-1 font-medium text-slate-700">
+                <span>Direct Visitors</span>
+                <InfoTooltip
+                  title="Direct Visitors"
+                  businessTerm="Travelers whose final flight stop is Abu Dhabi (not connecting onward)."
+                  technicalDefinition="Point-to-Point (P2P) Passengers = Total PAX − Transfer PAX − Transit PAX."
+                  position="top"
+                />
+              </span>
               <DataStatusChip status={baseline.totalP2P > 0 ? 'Derived' : 'Unknown'} size="sm" />
             </div>
             <p className="text-sm font-bold text-slate-900 font-mono">
@@ -161,7 +178,15 @@ export const BaselineSelector: React.FC<Props> = ({
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
             <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span>Transfer PAX</span>
+              <span className="flex items-center gap-1 font-medium text-slate-700">
+                <span>Transfer Travelers</span>
+                <InfoTooltip
+                  title="Transfer Travelers"
+                  businessTerm="Passengers connecting onward to another destination via AUH airport."
+                  technicalDefinition="Transfer PAX: Connecting passengers switching aircraft within Zayed International Airport."
+                  position="top"
+                />
+              </span>
               <DataStatusChip status={baseline.totalTransfer > 0 ? 'Observed' : 'Unknown'} size="sm" />
             </div>
             <p className="text-sm font-bold text-slate-900 font-mono">
@@ -171,7 +196,15 @@ export const BaselineSelector: React.FC<Props> = ({
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
             <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span>Transit PAX</span>
+              <span className="flex items-center gap-1 font-medium text-slate-700">
+                <span>Transit Travelers</span>
+                <InfoTooltip
+                  title="Transit Travelers"
+                  businessTerm="Passengers on short flight stops continuing on the same aircraft."
+                  technicalDefinition="Transit PAX: Direct transit travelers with temporary technical/operational stopover."
+                  position="top"
+                />
+              </span>
               <DataStatusChip status={baseline.totalTransit > 0 ? 'Observed' : 'Unknown'} size="sm" />
             </div>
             <p className="text-sm font-bold text-slate-900 font-mono">
@@ -181,7 +214,15 @@ export const BaselineSelector: React.FC<Props> = ({
 
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
             <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span>Hist. Load Factor</span>
+              <span className="flex items-center gap-1 font-medium text-slate-700">
+                <span>Seat Occupancy</span>
+                <InfoTooltip
+                  title="Seat Occupancy Rate"
+                  businessTerm="The average percentage of flight seats filled by passengers on this route."
+                  technicalDefinition="Passenger Load Factor = Total Arriving Passengers ÷ Scheduled Airline Seats. Expressed as a percentage."
+                  position="top"
+                />
+              </span>
               <DataStatusChip status={baseline.historicalLoadFactor > 0 ? 'Observed' : 'Assumed'} size="sm" />
             </div>
             <p className="text-sm font-bold text-teal-800 font-mono">

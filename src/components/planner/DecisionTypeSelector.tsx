@@ -37,7 +37,7 @@ export const DecisionTypeSelector: React.FC<Props> = ({ selectedType, onSelectTy
     },
     {
       type: 'TEST_LOAD_FACTOR',
-      title: 'Test load factor',
+      title: 'Test seat occupancy',
       question: 'How do fuller or emptier flights affect Abu Dhabi hotel arrivals?',
       icon: Percent,
     },
