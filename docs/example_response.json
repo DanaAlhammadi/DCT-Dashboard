@@ -1,0 +1,230 @@
+{
+  "schema_version": "dashboard_scenario_v1",
+  "target": "monthly_new_arrivals",
+  "baseline_value": 79823.19832027651,
+  "scenario_value": 79967.65956762529,
+  "absolute_change": 144.46124734877958,
+  "percent_change": 0.18097652109748133,
+  "lower_bound": null,
+  "upper_bound": null,
+  "baseline_kind": "regression_reference_prediction_not_seasonal_benchmark",
+  "guest_day_proxy": {
+    "target": "recorded_guest_days_proxy",
+    "baseline_value": 274448.5141375498,
+    "scenario_value": 274945.2015106396,
+    "absolute_change": 496.6873730898369,
+    "percent_change": 0.18097652109747042,
+    "lower_bound": null,
+    "upper_bound": null
+  },
+  "support_status": "supported_with_limitations",
+  "changed_fields": [
+    "seat_change"
+  ],
+  "assumptions": [
+    "Repeat reference-year monthly aviation without automatic growth; publication delays are not modelled.",
+    "Country identity supplies a predictor, not verified passenger nationality flows.",
+    "The saved regression predicts twice with unchanged coefficients; this is not a causal intervention estimate.",
+    "Nonpositive passenger slopes retain baseline predictions but abstain when the passenger input changes.",
+    "Recorded guest-day conversion is a historical ratio, not measured length of stay or verified occupied guest nights.",
+    "Prediction intervals are uncalibrated; all bounds remain missing."
+  ],
+  "warnings": [
+    "guest_day_proxy_not_verified_guest_nights",
+    "historical_ratio_not_measured_length_of_stay",
+    "linear_trend_extrapolation",
+    "other_nationality_zero_changes_are_model_structure_not_verified_no_effect",
+    "pax_above_seats",
+    "pax_excluding_infants_above_seats",
+    "seasonal_benchmark_outperformed_reference_model_in_final_evaluation",
+    "weekly_frequency_aggregation_pending"
+  ],
+  "model_version": "linear_v009",
+  "conversion_version": "conversion_v002",
+  "model_status": "evaluated_with_limitations",
+  "forecast_origin": "2024-12-31",
+  "reference_year": 2024,
+  "start_month": "2025-11",
+  "end_month": "2025-12",
+  "nationalities": [
+    "INDIA"
+  ],
+  "response_scope": "sum_of_selected_nationality_model_outputs_not_verified_all_market_impact",
+  "coverage": {
+    "expected_months": 2,
+    "requested_nationalities": 1,
+    "expected_rows": 2,
+    "baseline_rows": 2,
+    "scenario_rows": 2,
+    "supported_passenger_nationalities": 1,
+    "unsupported_passenger_nationalities": [],
+    "active_departure_countries": [
+      "INDIA"
+    ],
+    "unrepresented_departure_countries": [],
+    "changed_countries_outside_selection": [],
+    "aggregate_complete": true,
+    "guest_day_aggregate_complete": true
+  },
+  "normalized_input": {
+    "start_month": "2025-11",
+    "end_month": "2025-12",
+    "nationalities": [
+      "INDIA"
+    ],
+    "changes": [
+      {
+        "month": "2025-11",
+        "departure_country": "INDIA",
+        "seat_change": 1000
+      },
+      {
+        "month": "2025-12",
+        "departure_country": "INDIA",
+        "seat_change": 1000
+      }
+    ]
+  },
+  "monthly": [
+    {
+      "nationality": "INDIA",
+      "target": "monthly_new_arrivals",
+      "baseline_value": 38225.43488959895,
+      "scenario_value": 38297.98174263524,
+      "absolute_change": 72.54685303628503,
+      "percent_change": 0.1897868611457573,
+      "lower_bound": null,
+      "upper_bound": null,
+      "raw_baseline_value": 38225.43488959895,
+      "raw_scenario_value": 38297.98174263524,
+      "guest_day_proxy": {
+        "target": "recorded_guest_days_proxy",
+        "baseline_value": 131426.8787579664,
+        "scenario_value": 131676.30970586298,
+        "absolute_change": 249.4309478965879,
+        "percent_change": 0.1897868611457599,
+        "lower_bound": null,
+        "upper_bound": null
+      },
+      "conversion_factor": 3.43820493180909,
+      "conversion_factor_source": "nationality",
+      "response_scope": "matching_country_model_output_only",
+      "warnings": [
+        "guest_day_proxy_not_verified_guest_nights",
+        "historical_ratio_not_measured_length_of_stay",
+        "linear_trend_extrapolation",
+        "pax_above_seats",
+        "weekly_frequency_aggregation_pending"
+      ],
+      "month": "2025-11",
+      "support_status": "historical_p2p_range",
+      "scenario_effect_supported": true,
+      "baseline_p2p": 187549.0,
+      "scenario_p2p": 188134.8892255787
+    },
+    {
+      "nationality": "INDIA",
+      "target": "monthly_new_arrivals",
+      "baseline_value": 41597.76343067756,
+      "scenario_value": 41669.67782499005,
+      "absolute_change": 71.91439431249455,
+      "percent_change": 0.17288043486361832,
+      "lower_bound": null,
+      "upper_bound": null,
+      "raw_baseline_value": 41597.76343067756,
+      "raw_scenario_value": 41669.67782499005,
+      "guest_day_proxy": {
+        "target": "recorded_guest_days_proxy",
+        "baseline_value": 143021.6353795834,
+        "scenario_value": 143268.89180477668,
+        "absolute_change": 247.25642519327812,
+        "percent_change": 0.17288043486361535,
+        "lower_bound": null,
+        "upper_bound": null
+      },
+      "conversion_factor": 3.43820493180909,
+      "conversion_factor_source": "nationality",
+      "response_scope": "matching_country_model_output_only",
+      "warnings": [
+        "guest_day_proxy_not_verified_guest_nights",
+        "historical_ratio_not_measured_length_of_stay",
+        "linear_trend_extrapolation",
+        "pax_above_seats",
+        "pax_excluding_infants_above_seats",
+        "weekly_frequency_aggregation_pending"
+      ],
+      "month": "2025-12",
+      "support_status": "historical_p2p_range",
+      "scenario_effect_supported": true,
+      "baseline_p2p": 202576.0,
+      "scenario_p2p": 203156.7814815983
+    }
+  ],
+  "by_nationality": [
+    {
+      "nationality": "INDIA",
+      "target": "monthly_new_arrivals",
+      "baseline_value": 79823.19832027651,
+      "scenario_value": 79967.65956762529,
+      "absolute_change": 144.46124734877958,
+      "percent_change": 0.18097652109748133,
+      "lower_bound": null,
+      "upper_bound": null,
+      "raw_baseline_value": 79823.19832027651,
+      "raw_scenario_value": 79967.65956762529,
+      "guest_day_proxy": {
+        "target": "recorded_guest_days_proxy",
+        "baseline_value": 274448.5141375498,
+        "scenario_value": 274945.2015106396,
+        "absolute_change": 496.6873730898369,
+        "percent_change": 0.18097652109747042,
+        "lower_bound": null,
+        "upper_bound": null
+      },
+      "conversion_factor": 3.43820493180909,
+      "conversion_factor_source": "nationality",
+      "response_scope": "matching_country_model_output_only",
+      "warnings": [
+        "guest_day_proxy_not_verified_guest_nights",
+        "historical_ratio_not_measured_length_of_stay",
+        "linear_trend_extrapolation",
+        "pax_above_seats",
+        "pax_excluding_infants_above_seats",
+        "weekly_frequency_aggregation_pending"
+      ],
+      "start_month": "2025-11",
+      "end_month": "2025-12",
+      "support_statuses": [
+        "historical_p2p_range"
+      ],
+      "unsupported_effect_months": 0,
+      "expected_months": 2,
+      "observed_months": 2,
+      "complete_period": true
+    }
+  ],
+  "aviation_changes": [
+    {
+      "month": "2025-11",
+      "departure_country": "INDIA",
+      "reference_month": "2024-11",
+      "baseline_seats": 320110.0,
+      "scenario_seats": 321110.0,
+      "seat_change": 999.9999999999679,
+      "baseline_p2p": 187549.0,
+      "scenario_p2p": 188134.8892255787,
+      "p2p_change": 585.8892255786923
+    },
+    {
+      "month": "2025-12",
+      "departure_country": "INDIA",
+      "reference_month": "2024-12",
+      "baseline_seats": 348799.0,
+      "scenario_seats": 349799.0,
+      "seat_change": 1000.0000000000296,
+      "baseline_p2p": 202576.0,
+      "scenario_p2p": 203156.7814815983,
+      "p2p_change": 580.7814815983002
+    }
+  ]
+}

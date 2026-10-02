@@ -1,0 +1,9 @@
+{
+  "start_month": "2025-11",
+  "end_month": "2025-12",
+  "nationality": "INDIA",
+  "changes": [
+    {"month": "2025-11", "departure_country": "INDIA", "seat_change": 1000},
+    {"month": "2025-12", "departure_country": "INDIA", "seat_change": 1000}
+  ]
+}
