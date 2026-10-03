@@ -173,10 +173,11 @@ export const BaselineScenarioChart: React.FC<Props> = ({ result }) => {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-teal-800 bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-200">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-teal-900">
               Comparative Impact
             </span>
-            <span className="text-[11px] text-slate-500 font-medium">5 Funnel Stages</span>
+            <span className="text-stone-300">·</span>
+            <span className="text-[11px] text-stone-500 font-medium">5 Funnel Stages</span>
           </div>
 
           <h2 className="text-lg font-bold text-slate-900 font-display mt-1.5">

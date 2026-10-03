@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import { DashboardDataServerService } from './server/services/dashboardDataServerService';
 
 dotenv.config();
 
@@ -140,6 +141,181 @@ app.post('/api/sila/run-scenario', async (req, res) => {
       message: 'Failed to connect to SILA scenario backend',
     });
   }
+});
+
+// ==========================================
+// PROTECTED SERVER-SIDE DATA API ENDPOINTS
+// Never returns full raw datasets to browser
+// ==========================================
+
+/**
+ * 1. Data Integration Audit Summary
+ * Returns verification metadata, null counts, row counts, and governance items
+ * without exposing raw multi-megabyte datasets to client JavaScript.
+ */
+app.get('/api/data/audit-summary', async (req, res) => {
+  try {
+    const force = req.query.force === 'true';
+    const audit = await DashboardDataServerService.getAuditSummary();
+    if (force) {
+      await DashboardDataServerService.auditAllDatasets(true);
+    }
+    res.json(audit);
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to perform audit', message: err.message });
+  }
+});
+
+/**
+ * 2. High-level dataset summary
+ */
+app.get('/api/data/summary', async (_req, res) => {
+  try {
+    const audit = await DashboardDataServerService.getAuditSummary();
+    res.json({
+      globalStats: audit.globalStats,
+      security: audit.security,
+      status: 'AVAILABLE',
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve summary', message: err.message });
+  }
+});
+
+/**
+ * 3. Distinct markets, countries, cities, airlines, and routes
+ */
+app.get('/api/data/markets', async (_req, res) => {
+  try {
+    const markets = await DashboardDataServerService.getMarkets();
+    res.json(markets);
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve markets', message: err.message });
+  }
+});
+
+/**
+ * 4. Seasonality indices (strictly filtered by nationality or month)
+ */
+app.get('/api/data/seasonality', async (req, res) => {
+  try {
+    const nationality = req.query.nationality as string | undefined;
+    const month = req.query.month as string | undefined;
+    const records = await DashboardDataServerService.getSeasonality({ nationality, month });
+    res.json({ records, count: records.length, filteredBy: { nationality, month } });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve seasonality', message: err.message });
+  }
+});
+
+/**
+ * 5. Flight market summary (filtered by route or departure country)
+ */
+app.get('/api/data/flight-summary', async (req, res) => {
+  try {
+    const routeKey = req.query.routeKey as string | undefined;
+    const departureCountry = req.query.departureCountry as string | undefined;
+    const month = req.query.month as string | undefined;
+    const records = await DashboardDataServerService.getFlightSummary({ routeKey, departureCountry, month });
+    res.json({ records, count: records.length, filteredBy: { routeKey, departureCountry, month } });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve flight summary', message: err.message });
+  }
+});
+
+/**
+ * 6. Market mapping (filtered by nationality)
+ */
+app.get('/api/data/market-mapping', async (req, res) => {
+  try {
+    const hotelNationality = req.query.hotelNationality as string | undefined;
+    const departureCountry = req.query.departureCountry as string | undefined;
+    const records = await DashboardDataServerService.getMarketMapping({ hotelNationality, departureCountry });
+    res.json({ records, count: records.length });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve market mapping', message: err.message });
+  }
+});
+
+/**
+ * 7. Data Quality & Governance Register (9 items)
+ */
+app.get('/api/data/quality', async (req, res) => {
+  try {
+    const market = req.query.market as string | undefined;
+    const severity = req.query.severity as string | undefined;
+    const dataset = req.query.dataset as string | undefined;
+    const records = await DashboardDataServerService.getDataQuality({ market, severity, dataset });
+    res.json({ records, count: records.length });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve data quality', message: err.message });
+  }
+});
+
+/**
+ * 8. Model metrics & validation holdout info
+ */
+app.get('/api/data/model-metrics', async (_req, res) => {
+  try {
+    const metrics = await DashboardDataServerService.getModelMetrics();
+    res.json(metrics);
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve model metrics', message: err.message });
+  }
+});
+
+/**
+ * 9. Predictions (filtered by nationality and/or month)
+ */
+app.get('/api/data/predictions', async (req, res) => {
+  try {
+    const nationality = req.query.nationality as string | undefined;
+    const month = req.query.month as string | undefined;
+    const records = await DashboardDataServerService.getPredictions({ nationality, month });
+    res.json({ records, count: records.length, filteredBy: { nationality, month } });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve predictions', message: err.message });
+  }
+});
+
+/**
+ * 10. Chatbot Knowledge Base Search
+ * Returns only top relevant items matching user question/topic.
+ * Never dumps the entire 20-item knowledge base.
+ */
+app.get('/api/data/knowledge', async (req, res) => {
+  try {
+    const query = (req.query.q || req.query.topic) as string | undefined;
+    const items = await DashboardDataServerService.getKnowledge(query);
+    res.json({ items, count: items.length });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to search knowledge base', message: err.message });
+  }
+});
+
+/**
+ * 11. Security Audit Status
+ */
+app.get('/api/data/security-audit', async (_req, res) => {
+  try {
+    const audit = await DashboardDataServerService.getAuditSummary();
+    res.json(audit.security);
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to retrieve security audit', message: err.message });
+  }
+});
+
+// Explicitly block any direct public access to competition data paths or internal server files
+app.all('/dashboard_data_v1*', (_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+app.all('/server*', (_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+app.all('*.json', (req, res, next) => {
+  // Disallow direct static .json downloads unless explicitly permitted
+  if (req.path.startsWith('/api/')) return next();
+  res.status(404).json({ error: 'Not found' });
 });
 
 const PORT = parseInt(process.env.PORT || '3000', 10);

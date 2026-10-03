@@ -1,7 +1,0 @@
-{
-  "description": "Monthly hotel records by nationality",
-  "recordsCount": 0,
-  "data": [],
-  "status": "AWAITING_STRUCTURED_INGESTION",
-  "note": "EDA mode active. Data extracted from DCT hotel registration records (January 2022 to July 2025)."
-}

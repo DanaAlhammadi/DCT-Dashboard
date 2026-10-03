@@ -1,3 +1,5 @@
+import { DashboardDataService } from './dashboardDataService';
+
 export interface ModelReadinessStatus {
   isPredictionModeAvailable: boolean;
   activeMode: 'EDA_MODE' | 'PREDICTION_MODE';
@@ -46,34 +48,31 @@ export class DataReadinessService {
     let intervalsAvailable = false;
 
     try {
-      const predRes = await fetch('/data/model_predictions.json');
-      if (predRes.ok) {
-        files.modelPredictions = true;
-        const predData = await predRes.json();
-        if (predData && predData.isTrained && predData.predictions && predData.predictions.length > 0) {
-          predictionsValid = true;
-          modelVersion = predData.modelVersion || 'v1.0-prod';
-          validationPeriod = predData.validationPeriod || null;
-          intervalsAvailable = !!predData.predictionIntervals;
-        }
-      }
-    } catch {
-      // Keep predictionsValid = false
-    }
+      const store = await DashboardDataService.auditAllDatasets();
+      
+      files.metadata = store.fileSummaries['metadata.json']?.status === 'Loaded';
+      files.hotelMarketMonthly = store.fileSummaries['hotel_market_monthly.json']?.status === 'Loaded';
+      files.flightMarketMonthly = store.fileSummaries['flight_market_monthly.json']?.status === 'Loaded';
+      files.marketSeasonality = store.fileSummaries['market_seasonality.json']?.status === 'Loaded';
+      files.dataQuality = store.fileSummaries['data_quality.json']?.status === 'Loaded';
+      files.marketMapping = store.fileSummaries['market_mapping.json']?.status === 'Loaded';
+      files.modelPredictions = store.fileSummaries['model_predictions.json']?.status === 'Loaded';
+      files.modelMetrics = store.fileSummaries['model_metrics.json']?.status === 'Loaded';
 
-    try {
-      const metRes = await fetch('/data/model_metrics.json');
-      if (metRes.ok) {
-        files.modelMetrics = true;
-        const metData = await metRes.json();
-        if (metData && metData.isEvaluated && typeof metData.wmape === 'number') {
-          metricsValid = true;
-          wmape = metData.wmape;
-          validationPeriod = validationPeriod || metData.validationWindow || null;
-        }
+      if (store.modelPredictions && store.modelPredictions.length > 0) {
+        predictionsValid = true;
+        modelVersion = store.globalStats.modelVersion || 'linear_v009';
+        validationPeriod = '2025-01 to 2026-02';
+        intervalsAvailable = false; // Bounds uncalibrated
+      }
+
+      if (store.modelMetrics && typeof store.globalStats.overallWmape === 'number') {
+        metricsValid = true;
+        wmape = store.globalStats.overallWmape / 100;
+        validationPeriod = validationPeriod || '2022-01 to 2026-02';
       }
     } catch {
-      // Keep metricsValid = false
+      // In case audit fails, defaults are retained
     }
 
     const isPredictionMode = predictionsValid && metricsValid;

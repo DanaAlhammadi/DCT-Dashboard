@@ -1,117 +1,99 @@
 import React from 'react';
 import { DecisionType } from '../../types';
-import { 
-  PlusCircle, 
-  Repeat, 
-  PlaneTakeoff, 
-  Percent, 
-  MinusCircle, 
-  Globe2 
-} from 'lucide-react';
+import { Plane, Layers, Percent, Compass } from 'lucide-react';
 
 interface Props {
   selectedType: DecisionType;
   onSelectType: (type: DecisionType) => void;
 }
 
-interface Option {
+interface ActionChoice {
   type: DecisionType;
   title: string;
-  question: string;
+  explanation: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
 export const DecisionTypeSelector: React.FC<Props> = ({ selectedType, onSelectType }) => {
-  const options: Option[] = [
+  const choices: ActionChoice[] = [
     {
       type: 'CHANGE_FREQUENCY',
-      title: 'Increase / reduce flights',
-      question: 'How much hotel demand changes if weekly flight frequency shifts?',
-      icon: Repeat,
+      title: 'Add flights',
+      explanation: 'Increase weekly flight frequencies on an existing or growing route.',
+      icon: Plane,
     },
     {
       type: 'CHANGE_CAPACITY',
-      title: 'Change seat capacity',
-      question: 'What happens if an airline deploys larger or smaller aircraft?',
-      icon: PlaneTakeoff,
+      title: 'Change capacity',
+      explanation: 'Adjust scheduled monthly aircraft seats up or down.',
+      icon: Layers,
     },
     {
       type: 'TEST_LOAD_FACTOR',
-      title: 'Test seat occupancy',
-      question: 'How do fuller or emptier flights affect Abu Dhabi hotel arrivals?',
+      title: 'Change load factor',
+      explanation: 'Test higher or lower passenger occupancy without modifying flight schedules.',
       icon: Percent,
     },
     {
       type: 'NEW_ROUTE',
-      title: 'Add a new route',
-      question: 'How many hotel guests could an unserved direct route generate?',
-      icon: PlusCircle,
-    },
-    {
-      type: 'ASSESS_ROUTE_LOSS',
-      title: 'Assess route reduction / loss',
-      question: 'How much hotel demand could be lost if a route is discontinued?',
-      icon: MinusCircle,
-    },
-    {
-      type: 'COMPARE_MARKETS',
-      title: 'Compare source markets',
-      question: 'Which source market generates the most hotel demand per available seat?',
-      icon: Globe2,
+      title: 'New route',
+      explanation: 'Simulate introducing a direct non-stop air link from an unserved market.',
+      icon: Compass,
     },
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs mb-6" id="decision-question-selector">
-      <div className="mb-3.5 flex items-center justify-between">
-        <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
-            Step 1 · Planning Intent
-          </span>
-          <h2 className="text-base font-bold text-slate-900 font-display mt-1">
-            What decision are you exploring?
-          </h2>
-        </div>
-        <span className="text-xs text-slate-400 hidden sm:inline">Select a card to auto-configure relevant inputs</span>
+    <div className="space-y-4" id="decision-question-selector">
+      <div className="text-center max-w-2xl mx-auto space-y-1.5 pt-2 pb-1">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-stone-900 font-display">
+          What would you like to explore?
+        </h2>
+        <p className="text-sm sm:text-base text-stone-500 font-normal leading-relaxed">
+          See how a change in air connectivity could affect hotel arrivals in Abu Dhabi.
+        </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5">
-        {options.map((opt) => {
-          const Icon = opt.icon;
-          const isSelected = selectedType === opt.type;
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {choices.map((choice) => {
+          const Icon = choice.icon;
+          const isSelected = selectedType === choice.type;
 
           return (
             <button
-              key={opt.type}
-              id={`decision-card-${opt.type.toLowerCase()}`}
-              onClick={() => onSelectType(opt.type)}
-              className={`text-left p-3 rounded-xl border transition-all flex flex-col justify-between h-full min-h-[110px] ${
+              key={choice.type}
+              id={`decision-card-${choice.type.toLowerCase()}`}
+              type="button"
+              onClick={() => onSelectType(choice.type)}
+              className={`text-left p-5 sm:p-6 rounded-2xl border transition-all relative flex flex-col justify-between h-full group ${
                 isSelected
-                  ? 'bg-teal-50/80 border-teal-500 shadow-xs ring-2 ring-teal-500/20'
-                  : 'bg-slate-50/70 border-slate-200 hover:border-slate-300 hover:bg-white'
+                  ? 'bg-white border-teal-800 shadow-[0_4px_20px_-4px_rgba(13,64,82,0.12)] ring-1 ring-teal-800'
+                  : 'bg-white/80 hover:bg-white border-stone-200/80 hover:border-stone-300 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.03)] hover:shadow-xs'
               }`}
             >
-              <div className="flex items-center justify-between mb-2">
+              <div>
                 <div
-                  className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                    isSelected ? 'bg-teal-700 text-white shadow-xs' : 'bg-white text-slate-700 border border-slate-200'
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors mb-4 ${
+                    isSelected
+                      ? 'bg-teal-900 text-stone-100 shadow-xs'
+                      : 'bg-stone-100 text-stone-600 group-hover:bg-stone-200/70 group-hover:text-stone-900'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-5 h-5" />
                 </div>
-                {isSelected && (
-                  <span className="w-2 h-2 rounded-full bg-teal-600 ring-2 ring-teal-200" />
-                )}
-              </div>
-
-              <div>
-                <h3 className={`text-xs font-bold leading-tight mb-1 ${isSelected ? 'text-teal-950' : 'text-slate-800'}`}>
-                  {opt.title}
+                <h3 className="text-base font-semibold text-stone-900 tracking-tight mb-1.5">
+                  {choice.title}
                 </h3>
-                <p className="text-[10.5px] text-slate-500 line-clamp-2 leading-relaxed">
-                  {opt.question}
+                <p className="text-xs text-stone-500 leading-relaxed font-normal">
+                  {choice.explanation}
                 </p>
               </div>
+
+              {isSelected && (
+                <div className="mt-4 pt-3 border-t border-stone-100 flex items-center gap-1.5 text-[11px] font-medium text-teal-800">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-700" />
+                  <span>Selected planning lever</span>
+                </div>
+              )}
             </button>
           );
         })}

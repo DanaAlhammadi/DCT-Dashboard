@@ -1,6 +1,6 @@
 /**
  * SILA Dashboard Data Integration Types
- * Strictly models the 9 runtime JSON datasets located in /public/dashboard_data_v1/
+ * Strictly models the 9 runtime JSON datasets protected at server/data/dashboard_data_v1/
  * Preserves null values, month keys, and distinguishes fractions from percentages.
  */
 
@@ -333,6 +333,15 @@ export interface DataQualityDoc {
 }
 
 // Complete Loaded Datasets Container
+export interface SecurityAuditInfo {
+  rawDatasetsInClientBundle: number;
+  competitionJsonChunks: number;
+  publicRawDataRoutes: number;
+  serverSideDatasets: number;
+  storageLocation: string;
+  isProtected: boolean;
+}
+
 export interface DashboardDataStore {
   metadata: MetadataDoc | null;
   knowledgeBase: KnowledgeBaseItem[] | null;
@@ -347,6 +356,7 @@ export interface DashboardDataStore {
   globalStats: GlobalDataStats;
   isAudited: boolean;
   hasErrors: boolean;
+  security?: SecurityAuditInfo;
 }
 
 // Formatting utilities matching domain rules

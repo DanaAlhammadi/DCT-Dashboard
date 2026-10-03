@@ -10,6 +10,8 @@ import { ScenarioControls } from './components/planner/ScenarioControls';
 import { AdvancedAssumptions } from './components/planner/AdvancedAssumptions';
 import { ValidationPanel } from './components/planner/ValidationPanel';
 import { KPIGrid } from './components/planner/KPIGrid';
+import { ConversionChain } from './components/planner/ConversionChain';
+import { MethodologyDisclosure } from './components/planner/MethodologyDisclosure';
 import { BaselineScenarioChart } from './components/planner/BaselineScenarioChart';
 import { DecisionSummary } from './components/planner/DecisionSummary';
 import { TechnicalDetailsDrawer } from './components/planner/TechnicalDetailsDrawer';
@@ -337,11 +339,8 @@ export default function App() {
       <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 space-y-6">
         {/* Tab 1: Scenario Planner */}
         {activeTab === 'planner' && (
-          <div className="space-y-6 animate-in fade-in duration-150">
-            {/* Simple Three-Step Explanation & Mandatory Visible Status Banner */}
-            <PlannerHeaderSteps />
-
-            {/* Step 1 Question Lever Selector */}
+          <div className="space-y-8 animate-in fade-in duration-150">
+            {/* Exploration Intent Selection */}
             <DecisionTypeSelector
               selectedType={scenarioInput.decisionType}
               onSelectType={(type) => {
@@ -356,11 +355,11 @@ export default function App() {
               }}
             />
 
-            {/* Two-Column Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Column: Setup & Inputs (5 Cols on LG) */}
-              <div className="lg:col-span-5 space-y-5" id="planner-inputs-column">
-                {/* 1. Baseline Selection */}
+            {/* Guided Flow: Left Column (Inputs) & Right Column (Outputs & Story) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Left Column: Choose Baseline & Define Change (5 Cols) */}
+              <div className="lg:col-span-5 space-y-6" id="planner-inputs-column">
+                {/* Step 1: Baseline Selection */}
                 <BaselineSelector
                   routes={allRoutes}
                   selectedRoute={selectedRoute}
@@ -368,7 +367,7 @@ export default function App() {
                   onSelectRoute={handleSelectRoute}
                 />
 
-                {/* 2. Scenario Controls */}
+                {/* Step 2: Define Change */}
                 <ScenarioControls
                   input={scenarioInput}
                   baseline={currentBaseline}
@@ -377,30 +376,86 @@ export default function App() {
                   onApplyPreset={handleApplyPreset}
                 />
 
-                {/* 3. Advanced Assumptions Accordion */}
+                {/* Optional Progressive Disclosure: Advanced Assumptions */}
                 <AdvancedAssumptions
                   input={scenarioInput}
                   baseline={currentBaseline}
                   onChangeInput={handleInputUpdate}
                 />
 
-                {/* Validation Panel */}
+                {/* Validation Warnings (if any) */}
                 <ValidationPanel validation={validation} />
 
-                {/* Official Scenario Backend Integration Block */}
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-700/80 shadow-sm space-y-3">
+                {/* Primary Action Bar */}
+                <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] space-y-3">
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      id="run-scenario-main-btn"
+                      type="button"
+                      disabled={!validation.isValid || isCalculating}
+                      onClick={handleRunScenario}
+                      className={`flex-1 py-3.5 px-6 rounded-2xl font-semibold text-sm shadow-sm flex items-center justify-center gap-2 transition-all ${
+                        !validation.isValid || isCalculating
+                          ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
+                          : 'bg-teal-900 hover:bg-teal-800 text-white shadow-teal-950/10 hover:scale-[1.01] active:scale-[0.99]'
+                      }`}
+                    >
+                      {isCalculating ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                          <span>Simulating Impact…</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4 fill-current" />
+                          <span>Simulate Hotel Impact</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      id="reset-scenario-btn"
+                      type="button"
+                      onClick={handleResetToBaseline}
+                      title="Reset to current baseline"
+                      className="p-3.5 rounded-2xl border border-stone-200 hover:bg-stone-50 text-stone-600 transition-colors"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      id="save-scenario-btn"
+                      type="button"
+                      onClick={handleSaveScenario}
+                      title="Save scenario for comparison"
+                      className="py-3.5 px-4 rounded-2xl border border-stone-200 hover:bg-stone-50 text-stone-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                    >
+                      <Bookmark className="w-4 h-4 text-amber-500" />
+                      <span>Save</span>
+                    </button>
+                  </div>
+
+                  {saveSuccessMsg && (
+                    <div className="text-center text-xs font-medium text-teal-900 bg-teal-50 py-1.5 rounded-xl border border-teal-200 animate-in fade-in">
+                      {saveSuccessMsg}
+                    </div>
+                  )}
+                </div>
+
+                {/* Official Python Backend Benchmark Section */}
+                <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] space-y-3">
                   <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-1.5 text-white">
-                      <Sparkles className="w-4 h-4 text-amber-400" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-teal-300">
-                        Official Backend Integration
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-amber-500" />
+                      <span className="text-xs font-semibold text-stone-900">
+                        Official Backend Benchmark
                       </span>
                     </div>
                     <BackendHealthIndicator />
                   </div>
 
-                  <p className="text-[11px] text-slate-300 leading-relaxed">
-                    Test live Python scenario backend (<code className="text-teal-300 font-mono">linear_v009</code>) with the official India example (+1,000 seats in Nov &amp; Dec 2025).
+                  <p className="text-xs text-stone-500 leading-relaxed font-normal">
+                    Evaluate live Python scenario engine (<code className="text-teal-900 font-mono font-medium">linear_v009</code>) with the official India benchmark (+1,000 seats in Nov &amp; Dec 2025).
                   </p>
 
                   <button
@@ -408,86 +463,30 @@ export default function App() {
                     type="button"
                     disabled={isOfficialLoading}
                     onClick={handleRunOfficialIndiaExample}
-                    title="Run official India example (+1,000 seats Nov-Dec 2025) on Python backend"
-                    className={`w-full py-3 px-4 rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2 transition-all ${
+                    className={`w-full py-2.5 px-4 rounded-xl font-semibold text-xs border transition-all flex items-center justify-center gap-2 ${
                       isOfficialLoading
-                        ? 'bg-teal-900 text-teal-300 cursor-wait'
-                        : 'bg-teal-500 hover:bg-teal-400 text-slate-950 shadow-teal-950/20 hover:scale-[1.01] active:scale-[0.99]'
+                        ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-wait'
+                        : 'bg-stone-50 hover:bg-stone-100 text-stone-800 border-stone-200/80 active:scale-[0.99]'
                     }`}
                   >
                     {isOfficialLoading ? (
                       <>
-                        <span className="w-3.5 h-3.5 border-2 border-slate-950/40 border-t-slate-950 rounded-full animate-spin" />
-                        <span>Connecting to Python Backend…</span>
+                        <span className="w-3.5 h-3.5 border-2 border-stone-400 border-t-stone-800 rounded-full animate-spin" />
+                        <span>Querying Python Benchmark…</span>
                       </>
                     ) : (
                       <>
-                        <Play className="w-3.5 h-3.5 fill-current" />
-                        <span>Run Official India Example</span>
+                        <Play className="w-3.5 h-3.5 fill-current text-teal-800" />
+                        <span>Run Official India Benchmark</span>
                       </>
                     )}
                   </button>
-                </div>
-
-                {/* 4. Run Scenario Button */}
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-wrap items-center gap-2.5">
-                  <button
-                    id="run-scenario-main-btn"
-                    type="button"
-                    disabled={!validation.isValid || isCalculating}
-                    onClick={handleRunScenario}
-                    title={!validation.isValid ? 'Please fix blocking issues above' : 'Simulate aviation to hotel demand impact'}
-                    className={`flex-1 py-3 px-5 rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all ${
-                      !validation.isValid || isCalculating
-                        ? 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
-                        : 'bg-teal-700 hover:bg-teal-800 text-white shadow-teal-900/15 hover:scale-[1.01] active:scale-[0.99]'
-                    }`}
-                  >
-                    {isCalculating ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                        <span>Calculating hotel impact…</span>
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-4 h-4 fill-current" />
-                        <span>Run Scenario</span>
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    id="reset-scenario-btn"
-                    type="button"
-                    onClick={handleResetToBaseline}
-                    title="Reset to current baseline"
-                    className="p-3 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-600 transition-colors"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    id="save-scenario-btn"
-                    type="button"
-                    onClick={handleSaveScenario}
-                    title="Save scenario for comparison (up to 3)"
-                    className="py-3 px-4 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors"
-                  >
-                    <Bookmark className="w-4 h-4 text-amber-500" />
-                    <span>Save</span>
-                  </button>
-
-                  {saveSuccessMsg && (
-                    <span className="w-full text-center text-xs font-semibold text-teal-800 bg-teal-50 py-1.5 rounded-lg border border-teal-200 animate-in fade-in">
-                      {saveSuccessMsg}
-                    </span>
-                  )}
                 </div>
               </div>
 
-              {/* Right Column: Four Main Outputs (Height reduced by 30%) + Executive Decision Support */}
-              <div className="lg:col-span-7 space-y-4" id="planner-results-column">
-                {/* Official Python Scenario Backend Response View */}
+              {/* Right Column: Step 3 See Impact, Conversion Story, Decision & Methodology (7 Cols) */}
+              <div className="lg:col-span-7 space-y-6" id="planner-results-column">
+                {/* Official Python Scenario Backend Response View (if triggered) */}
                 {(officialScenarioResult || officialScenarioError || isOfficialLoading) && (
                   <OfficialScenarioResultView
                     result={officialScenarioResult}
@@ -501,17 +500,30 @@ export default function App() {
                   />
                 )}
 
-                {/* 1. Four Main Outputs (Height reduced by 30%, expandable drawer trigger integrated) */}
+                {/* 1. Primary Scenario Result (Hero Visually Dominant + 4 KPIs) */}
                 <KPIGrid
                   result={scenarioResult}
+                  route={selectedRoute}
                   onOpenTechnicalDrawer={() => setIsTechnicalDrawerOpen(true)}
                 />
 
-                {/* 2. Plain-language Executive Recommendation ("What this means for DCT") */}
+                {/* 2. Storytelling Conversion Flow (Seats → Pax → P2P → Hotel Check-ins + Separate Guest-Day Proxy) */}
+                <ConversionChain
+                  stages={scenarioResult.conversionStages}
+                  result={scenarioResult}
+                />
+
+                {/* 3. Executive Decision Summary ("What this means for DCT") */}
                 <DecisionSummary summary={scenarioResult.decisionSummary} />
 
-                {/* 3. Baseline-versus-Scenario Comparative Chart */}
+                {/* 4. Baseline-versus-Scenario Comparative Visual Chart */}
                 <BaselineScenarioChart result={scenarioResult} />
+
+                {/* 5. Progressive Disclosure: How SILA reached this result */}
+                <MethodologyDisclosure
+                  result={scenarioResult}
+                  route={selectedRoute}
+                />
               </div>
             </div>
           </div>

@@ -1,8 +1,7 @@
 import React from 'react';
 import { RouteInfo, BaselineFlightData } from '../../types';
-import { DataStatusChip } from '../common/DataStatusChip';
+import { Plane, Calendar, MapPin, Building2, ArrowRight } from 'lucide-react';
 import { InfoTooltip } from '../common/InfoTooltip';
-import { Plane, MapPin, Building, ArrowRight, Info, AlertCircle } from 'lucide-react';
 
 interface Props {
   routes: RouteInfo[];
@@ -18,234 +17,88 @@ export const BaselineSelector: React.FC<Props> = ({
   onSelectRoute,
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4" id="baseline-selector-card">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
-            Section A
+    <div className="bg-white rounded-2xl p-6 border border-stone-200/80 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] space-y-5" id="baseline-selector-card">
+      <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+        <div className="flex items-center gap-2.5">
+          <span className="w-6 h-6 rounded-full bg-stone-100 text-stone-700 font-semibold text-xs flex items-center justify-center">
+            1
           </span>
-          <h2 className="text-base font-bold text-slate-900 font-display mt-1">
-            1. Select the current situation
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            The baseline is the current or planned flight situation before your change.
-          </p>
+          <div>
+            <h3 className="text-sm font-semibold text-stone-900 tracking-tight">
+              Choose baseline
+            </h3>
+            <p className="text-[11px] text-stone-500">
+              Select the departure market and current flight operation before your change.
+            </p>
+          </div>
         </div>
-        <DataStatusChip status="Observed" size="md" />
+
+        <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-800">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+          <span>Observed Baseline</span>
+        </div>
       </div>
 
-      {/* Route Dropdown Selector */}
+      {/* Route Select Dropdown */}
       <div className="space-y-1.5">
-        <label className="text-xs font-bold text-slate-700 block">
+        <label htmlFor="route-selector-dropdown" className="text-xs font-medium text-stone-700 block">
           Operating Route & Airline
         </label>
-        <select
-          id="route-selector-dropdown"
-          value={selectedRoute.id}
-          onChange={(e) => onSelectRoute(e.target.value)}
-          className="w-full text-sm font-semibold py-2.5 px-3 rounded-xl border border-slate-300 bg-slate-50/50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-teal-500 focus:outline-hidden transition-all text-slate-800"
-        >
-          {routes.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.routeCode} — {r.departureCity}, {r.departureCountry} ({r.airline}) {r.isExisting ? '' : '— [PROPOSED NEW]'}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            id="route-selector-dropdown"
+            value={selectedRoute.id}
+            onChange={(e) => onSelectRoute(e.target.value)}
+            className="w-full text-sm font-medium py-3 px-3.5 pr-8 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-teal-700/20 focus:border-teal-700 focus:outline-hidden transition-all text-stone-900 appearance-none cursor-pointer"
+          >
+            {routes.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.routeCode} — {r.departureCity}, {r.departureCountry} ({r.airline}) {r.isExisting ? '' : '· Proposed New'}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400">
+            <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
       </div>
 
-      {/* Visual Route Path & Origin Distinction */}
-      <div className="p-4 rounded-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
-        {/* Subtle decorative background ring */}
-        <div className="absolute right-0 top-0 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="flex items-center justify-between relative z-10 mb-3">
+      {/* Clean Route Overview Card */}
+      <div className="p-4 rounded-xl bg-stone-50/80 border border-stone-200/70 space-y-3">
+        <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-teal-400" />
-            <span className="text-[11px] font-bold text-teal-300 uppercase tracking-wider">
-              {selectedRoute.isExisting ? 'Existing Active Route' : 'Proposed New Route'}
-            </span>
+            <MapPin className="w-3.5 h-3.5 text-stone-400" />
+            <span className="font-semibold text-stone-800">{selectedRoute.departureCity} ({selectedRoute.routeCode.split('-')[0] || selectedRoute.departureCity})</span>
+            <ArrowRight className="w-3 h-3 text-stone-300" />
+            <span className="font-semibold text-teal-900">Abu Dhabi (AUH)</span>
           </div>
-          <span className="text-xs font-mono text-slate-300 bg-white/10 px-2 py-0.5 rounded">
-            {selectedRoute.distanceKm.toLocaleString()} km · ~{selectedRoute.flightDurationHours}h
+          <span className="text-[11px] font-mono text-stone-500 bg-white px-2 py-0.5 rounded border border-stone-200/80">
+            {selectedRoute.airline}
           </span>
         </div>
 
-        {/* Path visual */}
-        <div className="flex items-center justify-between gap-3 relative z-10 my-1">
+        {/* 3 Key Baseline Stats */}
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-stone-200/60 text-center">
           <div>
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Origin City</span>
-            <p className="text-sm font-bold text-white flex items-center gap-1.5 mt-0.5">
-              <MapPin className="w-3.5 h-3.5 text-teal-400" />
-              {selectedRoute.departureCity}
-            </p>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center px-2">
-            <div className="w-full flex items-center gap-1">
-              <div className="h-0.5 flex-1 bg-gradient-to-r from-teal-400/30 to-teal-400" />
-              <div className="p-1.5 rounded-full bg-teal-500/20 text-teal-300 ring-1 ring-teal-400/40">
-                <Plane className="w-3.5 h-3.5 rotate-45" />
-              </div>
-              <div className="h-0.5 flex-1 bg-gradient-to-r from-teal-400 to-teal-400/30" />
+            <div className="text-[10px] text-stone-500 font-medium">Scheduled Seats</div>
+            <div className="text-sm font-semibold text-stone-900 font-mono mt-0.5">
+              {baseline.totalSeats.toLocaleString()}<span className="text-[10px] font-sans font-normal text-stone-400">/mo</span>
             </div>
-            <span className="text-[10px] font-mono text-slate-400 mt-1">{selectedRoute.airline}</span>
-          </div>
-
-          <div className="text-right">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Arrival Hub</span>
-            <p className="text-sm font-bold text-white flex items-center gap-1.5 justify-end mt-0.5">
-              <Building className="w-3.5 h-3.5 text-amber-400" />
-              Abu Dhabi (AUH)
-            </p>
-          </div>
-        </div>
-
-        {/* Exact Wording Dimensions */}
-        <div className="mt-3 pt-3 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-          <div>
-            <span className="text-slate-400 block text-[10px]">Flight-origin country:</span>
-            <span className="font-semibold text-slate-100">{selectedRoute.departureCountry}</span>
           </div>
           <div>
-            <span className="text-slate-400 block text-[10px]">Modelled source market:</span>
-            <span className="font-semibold text-teal-300">{selectedRoute.modelledSourceMarket}</span>
+            <div className="text-[10px] text-stone-500 font-medium">Historical Fill</div>
+            <div className="text-sm font-semibold text-stone-900 font-mono mt-0.5">
+              {(baseline.historicalLoadFactor * 100).toFixed(1)}%
+            </div>
           </div>
           <div>
-            <span className="text-slate-400 block text-[10px]">Reporting month:</span>
-            <span className="font-semibold text-slate-100">{baseline.reportingMonth}</span>
-          </div>
-          <div>
-            <span className="text-slate-400 block text-[10px]">Target airport:</span>
-            <span className="font-semibold text-amber-300">Zayed Int'l (AUH)</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Compact Baseline Summary Cards */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-slate-800">Observed Historical Baseline</span>
-          <span className="text-[11px] text-slate-400">Values per monthly operating cycle</span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span>Total Seats</span>
-              <DataStatusChip status={baseline.totalSeats > 0 ? 'Observed' : 'Unknown'} size="sm" />
+            <div className="text-[10px] text-stone-500 font-medium">Abu Dhabi Ending (P2P)</div>
+            <div className="text-sm font-semibold text-stone-900 font-mono mt-0.5">
+              {(baseline.totalPax > 0 ? (baseline.totalP2P / baseline.totalPax) * 100 : 45).toFixed(0)}%
             </div>
-            <p className="text-sm font-bold text-slate-900 font-mono">
-              {baseline.totalSeats > 0 ? baseline.totalSeats.toLocaleString() : '0 (New Route)'}
-            </p>
           </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span className="flex items-center gap-1 font-medium text-slate-700">
-                <span>Total Passengers</span>
-                <InfoTooltip
-                  title="Total Passengers"
-                  businessTerm="All travelers flying on this inbound route into Abu Dhabi."
-                  technicalDefinition="Total PAX: Aviation passenger count (revenue + non-revenue passengers deplaning)."
-                  position="top"
-                />
-              </span>
-              <DataStatusChip status={baseline.totalPax > 0 ? 'Observed' : 'Unknown'} size="sm" />
-            </div>
-            <p className="text-sm font-bold text-slate-900 font-mono">
-              {baseline.totalPax > 0 ? baseline.totalPax.toLocaleString() : '0'}
-            </p>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span className="flex items-center gap-1 font-medium text-slate-700">
-                <span>Direct Visitors</span>
-                <InfoTooltip
-                  title="Direct Visitors"
-                  businessTerm="Travelers whose final flight stop is Abu Dhabi (not connecting onward)."
-                  technicalDefinition="Point-to-Point (P2P) Passengers = Total PAX − Transfer PAX − Transit PAX."
-                  position="top"
-                />
-              </span>
-              <DataStatusChip status={baseline.totalP2P > 0 ? 'Derived' : 'Unknown'} size="sm" />
-            </div>
-            <p className="text-sm font-bold text-slate-900 font-mono">
-              {baseline.totalP2P > 0 ? baseline.totalP2P.toLocaleString() : '0'}
-            </p>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span className="flex items-center gap-1 font-medium text-slate-700">
-                <span>Transfer Travelers</span>
-                <InfoTooltip
-                  title="Transfer Travelers"
-                  businessTerm="Passengers connecting onward to another destination via AUH airport."
-                  technicalDefinition="Transfer PAX: Connecting passengers switching aircraft within Zayed International Airport."
-                  position="top"
-                />
-              </span>
-              <DataStatusChip status={baseline.totalTransfer > 0 ? 'Observed' : 'Unknown'} size="sm" />
-            </div>
-            <p className="text-sm font-bold text-slate-900 font-mono">
-              {baseline.totalTransfer > 0 ? baseline.totalTransfer.toLocaleString() : '0'}
-            </p>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span className="flex items-center gap-1 font-medium text-slate-700">
-                <span>Transit Travelers</span>
-                <InfoTooltip
-                  title="Transit Travelers"
-                  businessTerm="Passengers on short flight stops continuing on the same aircraft."
-                  technicalDefinition="Transit PAX: Direct transit travelers with temporary technical/operational stopover."
-                  position="top"
-                />
-              </span>
-              <DataStatusChip status={baseline.totalTransit > 0 ? 'Observed' : 'Unknown'} size="sm" />
-            </div>
-            <p className="text-sm font-bold text-slate-900 font-mono">
-              {baseline.totalTransit > 0 ? baseline.totalTransit.toLocaleString() : '0'}
-            </p>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-            <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-              <span className="flex items-center gap-1 font-medium text-slate-700">
-                <span>Seat Occupancy</span>
-                <InfoTooltip
-                  title="Seat Occupancy Rate"
-                  businessTerm="The average percentage of flight seats filled by passengers on this route."
-                  technicalDefinition="Passenger Load Factor = Total Arriving Passengers ÷ Scheduled Airline Seats. Expressed as a percentage."
-                  position="top"
-                />
-              </span>
-              <DataStatusChip status={baseline.historicalLoadFactor > 0 ? 'Observed' : 'Assumed'} size="sm" />
-            </div>
-            <p className="text-sm font-bold text-teal-800 font-mono">
-              {(baseline.historicalLoadFactor * 100).toFixed(0)}%
-            </p>
-          </div>
-        </div>
-
-        {/* Weekly Frequency Field with Required Exact Warning */}
-        <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-700">Average Weekly Frequency:</span>
-            {baseline.averageWeeklyFrequency !== null ? (
-              <span className="font-bold text-slate-900 font-mono px-2 py-0.5 rounded bg-white border border-slate-200">
-                {baseline.averageWeeklyFrequency} flights / week
-              </span>
-            ) : (
-              <span className="font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                Unavailable in the current extract
-              </span>
-            )}
-          </div>
-          <DataStatusChip status={baseline.frequencyDataStatus} size="sm" />
         </div>
       </div>
     </div>
