@@ -14,6 +14,7 @@ import { ConversionChain } from './components/planner/ConversionChain';
 import { MethodologyDisclosure } from './components/planner/MethodologyDisclosure';
 import { BaselineScenarioChart } from './components/planner/BaselineScenarioChart';
 import { DecisionSummary } from './components/planner/DecisionSummary';
+import { WarningsPanel } from './components/planner/WarningsPanel';
 import { TechnicalDetailsDrawer } from './components/planner/TechnicalDetailsDrawer';
 import { MarketInsightsTab } from './components/insights/MarketInsightsTab';
 import { CompareOpportunitiesTab } from './components/compare/CompareOpportunitiesTab';
@@ -29,6 +30,7 @@ import {
   SilaScenarioService,
   OFFICIAL_INDIA_EXAMPLE_REQUEST,
   classifyError,
+  buildCanonicalScenarioRequest,
 } from './services/silaScenarioService';
 import {
   ScenarioInput,
@@ -55,22 +57,31 @@ const WELCOME_SEEN_KEY = 'aerostay_welcome_seen_v1';
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('planner');
   const [selectedRouteId, setSelectedRouteId] = useState<string>('DEL-AUH');
+  const [selectedMarket, setSelectedMarket] = useState<string>('India');
 
   // Load all routes from DataService
   const allRoutes = useMemo(() => DataService.getRoutes(), []);
 
-  // Scenario Input State (Defaulting to India +2 Weekly flights example)
+  // Scenario Input State (Defaulting to India +1,000 Scheduled seats benchmark)
   const [scenarioInput, setScenarioInput] = useState<ScenarioInput>({
-    scenarioName: 'India: +2 Weekly Flights (DEL/BOM)',
+    scenarioName: 'India: +1,000 Seats (DEL/BOM)',
     routeId: 'DEL-AUH',
-    decisionType: 'CHANGE_FREQUENCY',
+    decisionType: 'CHANGE_CAPACITY',
     routeStatus: 'EXISTING',
-    startMonth: '2027-01',
-    endMonth: '2027-03',
-    seatCapacityChange: 2800,
+    startMonth: '2025-11',
+    endMonth: '2025-12',
+    seatCapacityChange: 1000,
     useCustomLoadFactor: false,
     customLoadFactor: null,
-    assumedWeeklyFrequencyChange: 2,
+    assumedWeeklyFrequencyChange: null,
+    seatsPerFlight: 200,
+    newRouteDepartureCountry: 'Japan',
+    newRouteDepartureCity: 'Tokyo (HND)',
+    newRouteArrivalCity: 'Abu Dhabi (AUH)',
+    newRouteAirline: 'Etihad Airways',
+    newRouteMonthlyCapacity: 3000,
+    newRouteLoadFactor: 0.75,
+    newRouteP2PShare: 0.45,
   });
 
   // UI Modals & Drawers
@@ -125,16 +136,16 @@ export default function App() {
     const initRoute = DataService.getRouteById('DEL-AUH');
     const initBaseline = DataService.getBaseline('DEL-AUH');
     const initInput: ScenarioInput = {
-      scenarioName: 'India: +2 Weekly Flights (DEL/BOM)',
+      scenarioName: 'India: +1,000 Seats (DEL/BOM)',
       routeId: 'DEL-AUH',
-      decisionType: 'CHANGE_FREQUENCY',
+      decisionType: 'CHANGE_CAPACITY',
       routeStatus: 'EXISTING',
-      startMonth: '2027-01',
-      endMonth: '2027-03',
-      seatCapacityChange: 2800,
+      startMonth: '2025-11',
+      endMonth: '2025-12',
+      seatCapacityChange: 1000,
       useCustomLoadFactor: false,
       customLoadFactor: null,
-      assumedWeeklyFrequencyChange: 2,
+      assumedWeeklyFrequencyChange: null,
     };
     return ScenarioService.simulate(initInput, initBaseline, initRoute);
   });
@@ -149,9 +160,38 @@ export default function App() {
     setIsOfficialLoading(true);
     setOfficialScenarioError(null);
     try {
+      setSelectedMarket('India');
+      setSelectedRouteId('DEL-AUH');
+      setScenarioInput((prev) => ({
+        ...prev,
+        scenarioName: 'Official India Example (+1,000 Seats Nov-Dec 2025)',
+        routeId: 'DEL-AUH',
+        decisionType: 'CHANGE_CAPACITY',
+        startMonth: '2025-11',
+        endMonth: '2025-12',
+        seatCapacityChange: 1000,
+        assumedWeeklyFrequencyChange: null,
+      }));
+
       const resp = await SilaScenarioService.runScenario(OFFICIAL_INDIA_EXAMPLE_REQUEST);
       setOfficialScenarioResult(resp);
       setOfficialScenarioError(null);
+
+      const b = DataService.getBaseline('DEL-AUH');
+      const r = DataService.getRouteById('DEL-AUH');
+      const res = ScenarioService.simulate({
+        scenarioName: 'Official India Example (+1,000 Seats Nov-Dec 2025)',
+        routeId: 'DEL-AUH',
+        decisionType: 'CHANGE_CAPACITY',
+        routeStatus: 'EXISTING',
+        startMonth: '2025-11',
+        endMonth: '2025-12',
+        seatCapacityChange: 1000,
+        useCustomLoadFactor: false,
+        customLoadFactor: null,
+        assumedWeeklyFrequencyChange: null,
+      }, b, r);
+      setScenarioResult(res);
     } catch (err: unknown) {
       setOfficialScenarioResult(null);
       setOfficialScenarioError(classifyError(err));
@@ -160,18 +200,26 @@ export default function App() {
     }
   };
 
+  // Run initial authoritative scenario to populate Step 3 on startup
+  useEffect(() => {
+    handleRunOfficialIndiaExample();
+  }, []);
+
   // Update input when route changes
   const handleSelectRoute = (routeId: string) => {
     setSelectedRouteId(routeId);
     const r = DataService.getRouteById(routeId);
     const b = DataService.getBaseline(routeId);
     if (r && b) {
+      if (r.departureCountry) {
+        setSelectedMarket(r.departureCountry);
+      }
       setScenarioInput((prev) => ({
         ...prev,
         routeId,
         scenarioName: `${r.departureCountry}: Custom Scenario`,
         routeStatus: r.isExisting ? 'EXISTING' : 'NEW_ROUTE',
-        seatCapacityChange: r.isExisting ? 2000 : 2400,
+        seatCapacityChange: r.isExisting ? 1000 : 2400,
         useCustomLoadFactor: false,
         customLoadFactor: null,
         assumedWeeklyFrequencyChange: r.isExisting ? null : 3,
@@ -183,16 +231,46 @@ export default function App() {
     setScenarioInput((prev) => ({ ...prev, ...updated }));
   };
 
-  // Run Simulation Action with Realistic Loading
-  const handleRunScenario = () => {
+  // Run Simulation Action: Builds authoritative CanonicalScenarioRequest and queries backend
+  const handleRunScenario = async () => {
     if (!validation.isValid) return;
 
     setIsCalculating(true);
-    setTimeout(() => {
+    try {
+      let scenarioMode: 'SEATS' | 'FREQUENCY' | 'LOAD_FACTOR' | 'NEW_ROUTE' = 'SEATS';
+      if (scenarioInput.decisionType === 'CHANGE_FREQUENCY') scenarioMode = 'FREQUENCY';
+      else if (scenarioInput.decisionType === 'TEST_LOAD_FACTOR') scenarioMode = 'LOAD_FACTOR';
+      else if (scenarioInput.decisionType === 'NEW_ROUTE') scenarioMode = 'NEW_ROUTE';
+
+      const canonicalReq = buildCanonicalScenarioRequest({
+        scenarioMode,
+        startMonth: scenarioInput.startMonth,
+        endMonth: scenarioInput.endMonth,
+        nationality: selectedMarket.toUpperCase(),
+        departureCountry: selectedRoute.departureCountry,
+        departureCity: selectedRoute.departureCity,
+        airline: selectedRoute.airline,
+        seatChange: scenarioInput.seatCapacityChange,
+        weeklyFrequencyChange: scenarioInput.assumedWeeklyFrequencyChange ?? 2,
+        seatsPerFlight: scenarioInput.seatsPerFlight ?? 200,
+        loadFactorPct: scenarioInput.customLoadFactor ? Math.round(scenarioInput.customLoadFactor * 100) : 85,
+        monthlyCapacity: scenarioInput.newRouteMonthlyCapacity ?? 3000,
+        newRouteLoadFactorPct: scenarioInput.newRouteLoadFactor ? Math.round(scenarioInput.newRouteLoadFactor * 100) : 75,
+        p2pShare: scenarioInput.newRouteP2PShare ?? 0.45,
+      });
+
       const res = ScenarioService.simulate(scenarioInput, currentBaseline, selectedRoute);
       setScenarioResult(res);
+
+      const resp = await SilaScenarioService.runScenario(canonicalReq);
+      setOfficialScenarioResult(resp);
+    } catch (err: unknown) {
+      console.warn('Backend call handled, updated local simulation:', err);
+      const res = ScenarioService.simulate(scenarioInput, currentBaseline, selectedRoute);
+      setScenarioResult(res);
+    } finally {
       setIsCalculating(false);
-    }, 350);
+    }
   };
 
   // Reset to Baseline
@@ -323,7 +401,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100/70 text-slate-900 flex flex-col selection:bg-teal-700 selection:text-white" id="aerostay-app-root">
+    <div className="min-h-screen bg-[#F4F1EA] text-[#0A2E4D] flex flex-col selection:bg-[#0A2E4D] selection:text-[#F4F1EA]" id="aerostay-app-root">
       {/* Global Header */}
       <AppHeader
         activeTab={activeTab}
@@ -364,7 +442,13 @@ export default function App() {
                   routes={allRoutes}
                   selectedRoute={selectedRoute}
                   baseline={currentBaseline}
+                  decisionType={scenarioInput.decisionType}
+                  selectedMarket={selectedMarket}
+                  startMonth={scenarioInput.startMonth}
+                  endMonth={scenarioInput.endMonth}
                   onSelectRoute={handleSelectRoute}
+                  onSelectMarket={setSelectedMarket}
+                  onSelectPeriod={(s, e) => setScenarioInput((prev) => ({ ...prev, startMonth: s, endMonth: e }))}
                 />
 
                 {/* Step 2: Define Change */}
@@ -387,17 +471,17 @@ export default function App() {
                 <ValidationPanel validation={validation} />
 
                 {/* Primary Action Bar */}
-                <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] space-y-3">
+                <div className="p-5 rounded-3xl bg-white border border-[#0A2E4D]/10 shadow-[0_2px_12px_-4px_rgba(10,46,77,0.05)] space-y-3">
                   <div className="flex items-center gap-2.5">
                     <button
                       id="run-scenario-main-btn"
                       type="button"
                       disabled={!validation.isValid || isCalculating}
                       onClick={handleRunScenario}
-                      className={`flex-1 py-3.5 px-6 rounded-2xl font-semibold text-sm shadow-sm flex items-center justify-center gap-2 transition-all ${
+                      className={`flex-1 py-3.5 px-6 rounded-2xl font-semibold text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
                         !validation.isValid || isCalculating
                           ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
-                          : 'bg-teal-900 hover:bg-teal-800 text-white shadow-teal-950/10 hover:scale-[1.01] active:scale-[0.99]'
+                          : 'bg-[#0A2E4D] hover:bg-[#08233B] text-white shadow-[#0A2E4D]/10 hover:scale-[1.01] active:scale-[0.99]'
                       }`}
                     >
                       {isCalculating ? (
@@ -418,7 +502,7 @@ export default function App() {
                       type="button"
                       onClick={handleResetToBaseline}
                       title="Reset to current baseline"
-                      className="p-3.5 rounded-2xl border border-stone-200 hover:bg-stone-50 text-stone-600 transition-colors"
+                      className="p-3.5 rounded-2xl border border-[#0A2E4D]/15 hover:bg-[#F4F1EA] text-[#0A2E4D] transition-colors cursor-pointer"
                     >
                       <RotateCcw className="w-4 h-4" />
                     </button>
@@ -428,98 +512,88 @@ export default function App() {
                       type="button"
                       onClick={handleSaveScenario}
                       title="Save scenario for comparison"
-                      className="py-3.5 px-4 rounded-2xl border border-stone-200 hover:bg-stone-50 text-stone-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                      className="py-3.5 px-4 rounded-2xl border border-[#0A2E4D]/15 hover:bg-[#F4F1EA] text-[#0A2E4D] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
-                      <Bookmark className="w-4 h-4 text-amber-500" />
+                      <Bookmark className="w-4 h-4 text-[#D4AF37]" />
                       <span>Save</span>
                     </button>
                   </div>
 
                   {saveSuccessMsg && (
-                    <div className="text-center text-xs font-medium text-teal-900 bg-teal-50 py-1.5 rounded-xl border border-teal-200 animate-in fade-in">
+                    <div className="text-center text-xs font-medium text-[#0E6B6E] bg-[#0E6B6E]/10 py-1.5 rounded-xl border border-[#0E6B6E]/20 animate-in fade-in">
                       {saveSuccessMsg}
                     </div>
                   )}
-                </div>
 
-                {/* Official Python Backend Benchmark Section */}
-                <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] space-y-3">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-amber-500" />
-                      <span className="text-xs font-semibold text-stone-900">
-                        Official Backend Benchmark
-                      </span>
-                    </div>
-                    <BackendHealthIndicator />
+                  {/* Official Benchmark Testing Button */}
+                  <div className="pt-2 border-t border-[#0A2E4D]/10">
+                    <button
+                      id="run-official-india-example-btn"
+                      type="button"
+                      disabled={isOfficialLoading}
+                      onClick={handleRunOfficialIndiaExample}
+                      className={`w-full py-3 px-4 rounded-2xl font-semibold text-xs border transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                        isOfficialLoading
+                          ? 'bg-[#F4F1EA] text-stone-400 border-[#0A2E4D]/10 cursor-wait'
+                          : 'bg-[#F4F1EA] hover:bg-[#EDE8DE] text-[#0A2E4D] border-[#0A2E4D]/20 shadow-xs active:scale-[0.99]'
+                      }`}
+                    >
+                      {isOfficialLoading ? (
+                        <>
+                          <span className="w-3.5 h-3.5 border-2 border-stone-400 border-t-[#0A2E4D] rounded-full animate-spin" />
+                          <span>Evaluating Official Benchmark…</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+                          <span>Run Official India Example (+144 check-ins)</span>
+                        </>
+                      )}
+                    </button>
+                    <p className="text-[10.5px] text-[#0A2E4D]/60 text-center mt-1.5 font-normal">
+                      Evaluates supplied <code className="font-mono text-[#0E6B6E]">example_request.json</code> (+1,000 seats Nov–Dec 2025).
+                    </p>
                   </div>
-
-                  <p className="text-xs text-stone-500 leading-relaxed font-normal">
-                    Evaluate live Python scenario engine (<code className="text-teal-900 font-mono font-medium">linear_v009</code>) with the official India benchmark (+1,000 seats in Nov &amp; Dec 2025).
-                  </p>
-
-                  <button
-                    id="run-official-india-example-btn"
-                    type="button"
-                    disabled={isOfficialLoading}
-                    onClick={handleRunOfficialIndiaExample}
-                    className={`w-full py-2.5 px-4 rounded-xl font-semibold text-xs border transition-all flex items-center justify-center gap-2 ${
-                      isOfficialLoading
-                        ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-wait'
-                        : 'bg-stone-50 hover:bg-stone-100 text-stone-800 border-stone-200/80 active:scale-[0.99]'
-                    }`}
-                  >
-                    {isOfficialLoading ? (
-                      <>
-                        <span className="w-3.5 h-3.5 border-2 border-stone-400 border-t-stone-800 rounded-full animate-spin" />
-                        <span>Querying Python Benchmark…</span>
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-3.5 h-3.5 fill-current text-teal-800" />
-                        <span>Run Official India Benchmark</span>
-                      </>
-                    )}
-                  </button>
                 </div>
               </div>
 
               {/* Right Column: Step 3 See Impact, Conversion Story, Decision & Methodology (7 Cols) */}
               <div className="lg:col-span-7 space-y-6" id="planner-results-column">
-                {/* Official Python Scenario Backend Response View (if triggered) */}
-                {(officialScenarioResult || officialScenarioError || isOfficialLoading) && (
-                  <OfficialScenarioResultView
-                    result={officialScenarioResult}
-                    error={officialScenarioError}
-                    isLoading={isOfficialLoading}
-                    onRetry={handleRunOfficialIndiaExample}
-                    onClear={() => {
-                      setOfficialScenarioResult(null);
-                      setOfficialScenarioError(null);
-                    }}
-                  />
-                )}
-
                 {/* 1. Primary Scenario Result (Hero Visually Dominant + 4 KPIs) */}
                 <KPIGrid
+                  silaResponse={officialScenarioResult}
                   result={scenarioResult}
                   route={selectedRoute}
                   onOpenTechnicalDrawer={() => setIsTechnicalDrawerOpen(true)}
                 />
 
-                {/* 2. Storytelling Conversion Flow (Seats → Pax → P2P → Hotel Check-ins + Separate Guest-Day Proxy) */}
-                <ConversionChain
-                  stages={scenarioResult.conversionStages}
+                {/* 2. Monthly Baseline-vs-Scenario Chart & by_nationality[] Period Summary */}
+                <BaselineScenarioChart
+                  silaResponse={officialScenarioResult}
                   result={scenarioResult}
                 />
 
-                {/* 3. Executive Decision Summary ("What this means for DCT") */}
-                <DecisionSummary summary={scenarioResult.decisionSummary} />
+                {/* 3. Storytelling Conversion Flow (Scheduled seats ↓ Passengers ↓ Abu Dhabi-ending traffic ↓ Predicted hotel check-ins) */}
+                <ConversionChain
+                  stages={scenarioResult.conversionStages}
+                  result={scenarioResult}
+                  silaResponse={officialScenarioResult}
+                />
 
-                {/* 4. Baseline-versus-Scenario Comparative Visual Chart */}
-                <BaselineScenarioChart result={scenarioResult} />
+                {/* 4. Executive Decision Summary ("What this means for DCT") */}
+                <DecisionSummary
+                  summary={scenarioResult.decisionSummary}
+                  silaResponse={officialScenarioResult}
+                />
 
-                {/* 5. Progressive Disclosure: How SILA reached this result */}
+                {/* 5. Trust & Governance Warnings Disclosures */}
+                <WarningsPanel
+                  supportStatus={officialScenarioResult?.support_status || scenarioResult.supportLevel}
+                  warnings={officialScenarioResult?.warnings || []}
+                  assumptions={officialScenarioResult?.assumptions || []}
+                />
+
+                {/* 6. Progressive Disclosure: Methodology Disclosure */}
                 <MethodologyDisclosure
                   result={scenarioResult}
                   route={selectedRoute}

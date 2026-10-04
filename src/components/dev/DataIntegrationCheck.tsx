@@ -16,7 +16,6 @@ import {
   RefreshCw,
   Calendar,
   Globe2,
-  Plane,
   Building,
   Activity,
   Layers,
@@ -279,7 +278,7 @@ export const DataIntegrationCheck: React.FC<Props> = ({
           {/* 6. Airlines */}
           <div className="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
             <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-medium">
-              <Plane className="w-3 h-3 text-indigo-400" />
+              <Layers className="w-3 h-3 text-[#D4AF37]" />
               <span>Airlines</span>
             </div>
             <div className="text-sm font-bold text-white mt-1 font-mono">
@@ -315,7 +314,7 @@ export const DataIntegrationCheck: React.FC<Props> = ({
           {/* 9. Overall WMAPE */}
           <div className="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
             <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-medium">
-              <Activity className="w-3 h-3 text-purple-400" />
+              <Activity className="w-3 h-3 text-[#D4AF37]" />
               <span>Overall WMAPE</span>
             </div>
             <div className="text-sm font-bold text-white mt-1 font-mono">
@@ -703,7 +702,7 @@ export const DataIntegrationCheck: React.FC<Props> = ({
                   {fileSummary.filename === 'flight_market_monthly.json' && (
                     <div className="p-3.5 rounded-xl bg-teal-50/70 border border-teal-200 space-y-2 text-xs">
                       <div className="font-bold text-teal-950 flex items-center gap-1.5">
-                        <Plane className="w-4 h-4 text-teal-700" />
+                        <Layers className="w-4 h-4 text-teal-700" />
                         <span>Aviation Specification Verification Checklist:</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700">

@@ -94,9 +94,9 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
         id="open-ask-aerostay-btn"
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-teal-950 hover:bg-teal-900 text-stone-100 px-4 py-3 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)] flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 no-print border border-teal-800/80"
+        className="fixed bottom-6 right-6 z-40 bg-[#0A2E4D] hover:bg-[#08233B] text-white px-4 py-3 rounded-full shadow-[0_4px_20px_rgba(10,46,77,0.2)] flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 no-print border border-[#D4AF37]/40"
       >
-        <div className="w-6 h-6 rounded-full bg-teal-800/80 flex items-center justify-center font-bold text-xs text-stone-100">
+        <div className="w-6 h-6 rounded-full bg-[#0A2E4D] text-[#D4AF37] border border-[#D4AF37]/50 flex items-center justify-center font-bold text-xs">
           ص
         </div>
         <span className="text-xs font-semibold tracking-tight">Ask SILA</span>
@@ -107,25 +107,25 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
         <div
           id="ask-aerostay-backdrop"
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-50 bg-stone-900/30 backdrop-blur-xs transition-opacity animate-in fade-in"
+          className="fixed inset-0 z-50 bg-[#0A2E4D]/40 backdrop-blur-xs transition-opacity animate-in fade-in"
         >
           {/* Drawer Container */}
           <div
             id="ask-aerostay-drawer"
             onClick={(e) => e.stopPropagation()}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-[#FAF9F5] shadow-2xl flex flex-col border-l border-stone-200/80 animate-in slide-in-from-right duration-200"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-[#F4F1EA] shadow-2xl flex flex-col border-l border-[#0A2E4D]/15 animate-in slide-in-from-right duration-200"
           >
             {/* Header */}
-            <div className="p-5 border-b border-stone-200/80 bg-white flex items-center justify-between">
+            <div className="p-5 border-b border-[#0A2E4D]/10 bg-white flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-teal-900 text-stone-100 flex items-center justify-center font-bold text-sm">
+                <div className="w-8 h-8 rounded-xl bg-[#0A2E4D] text-[#D4AF37] flex items-center justify-center font-bold text-sm shadow-xs">
                   ص
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-stone-900 tracking-tight">
+                  <h3 className="text-sm font-semibold text-[#0A2E4D] tracking-tight">
                     SILA Assistant
                   </h3>
-                  <p className="text-[11px] text-stone-500 font-normal">
+                  <p className="text-[11px] text-[#0A2E4D]/60 font-normal">
                     Grounded in official DCT research &amp; live scenario state
                   </p>
                 </div>
@@ -134,7 +134,7 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+                className="p-1.5 rounded-lg text-[#0A2E4D]/40 hover:text-[#0A2E4D] hover:bg-[#F4F1EA] transition-colors"
                 aria-label="Close drawer"
               >
                 <X className="w-5 h-5" />
@@ -142,9 +142,9 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
             </div>
 
             {/* Sub-header Banner */}
-            <div className="px-5 py-3 bg-stone-50 border-b border-stone-200/60 text-xs text-stone-600">
-              <span className="font-semibold text-stone-800">What would you like to understand?</span>
-              <span className="block text-[11px] text-stone-500 mt-0.5">
+            <div className="px-5 py-3 bg-[#F4F1EA] border-b border-[#0A2E4D]/10 text-xs text-[#0A2E4D]">
+              <span className="font-semibold text-[#0A2E4D]">What would you like to understand?</span>
+              <span className="block text-[11px] text-[#0A2E4D]/60 mt-0.5">
                 Current context: {currentRoute ? `${currentRoute.routeCode} (${currentRoute.modelledSourceMarket})` : 'All Markets'}
               </span>
             </div>
@@ -159,27 +159,27 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
                   <div
                     className={`max-w-[88%] p-4 rounded-2xl text-xs sm:text-[13px] leading-relaxed ${
                       msg.sender === 'user'
-                        ? 'bg-teal-900 text-white rounded-br-xs shadow-xs'
-                        : 'bg-white text-stone-800 border border-stone-200/80 rounded-bl-xs shadow-xs space-y-2'
+                        ? 'bg-[#0A2E4D] text-white rounded-br-xs shadow-xs'
+                        : 'bg-white text-[#0A2E4D] border border-[#0A2E4D]/10 rounded-bl-xs shadow-xs space-y-2'
                     }`}
                   >
                     <div className="whitespace-pre-wrap">{msg.text}</div>
 
                     {msg.limitation && (
-                      <div className="pt-2 border-t border-stone-100 text-[10px] text-stone-400">
+                      <div className="pt-2 border-t border-[#0A2E4D]/10 text-[10px] text-[#0A2E4D]/60">
                         {msg.limitation}
                       </div>
                     )}
                   </div>
-                  <span className="text-[10px] text-stone-400 mt-1 px-1">{msg.timestamp}</span>
+                  <span className="text-[10px] text-[#0A2E4D]/40 mt-1 px-1">{msg.timestamp}</span>
                 </div>
               ))}
 
               {isTyping && (
-                <div className="flex items-center gap-2 p-3 bg-white rounded-xl border border-stone-200/80 w-28 text-xs text-stone-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-800 animate-pulse" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-800 animate-pulse delay-75" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-800 animate-pulse delay-150" />
+                <div className="flex items-center gap-2 p-3 bg-white rounded-xl border border-[#0A2E4D]/10 w-28 text-xs text-[#0A2E4D]/60">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0E6B6E] animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0E6B6E] animate-pulse delay-75" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0E6B6E] animate-pulse delay-150" />
                   <span className="text-[10px] ml-1">Thinking…</span>
                 </div>
               )}
@@ -188,8 +188,8 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
             </div>
 
             {/* Suggested Quick Questions Bar */}
-            <div className="px-5 py-3 border-t border-stone-200/60 bg-white/70 space-y-2">
-              <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">
+            <div className="px-5 py-3 border-t border-[#0A2E4D]/10 bg-white/70 space-y-2">
+              <span className="text-[10px] font-semibold text-[#0A2E4D]/50 uppercase tracking-wider block">
                 Suggested questions:
               </span>
               <div className="flex flex-wrap gap-1.5">
@@ -198,7 +198,7 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
                     key={prompt}
                     type="button"
                     onClick={() => handleSend(prompt)}
-                    className="text-[11px] px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200/80 text-stone-700 font-medium transition-colors text-left"
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-white hover:bg-[#F4F1EA] text-[#0A2E4D] border border-[#0A2E4D]/10 font-medium transition-colors text-left"
                   >
                     {prompt}
                   </button>
@@ -207,7 +207,7 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
             </div>
 
             {/* Input Bar */}
-            <div className="p-4 border-t border-stone-200 bg-white">
+            <div className="p-4 border-t border-[#0A2E4D]/10 bg-white">
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -215,13 +215,13 @@ export const AskAeroStayDrawer: React.FC<Props> = ({ currentResult, currentRoute
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask a question about this scenario…"
-                  className="flex-1 text-xs py-2.5 px-3.5 rounded-xl border border-stone-200 bg-stone-50/50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-700/20 focus:border-teal-700 text-stone-800 placeholder-stone-400"
+                  className="flex-1 text-xs py-2.5 px-3.5 rounded-xl border border-[#0A2E4D]/15 bg-[#F4F1EA]/40 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#0E6B6E]/20 focus:border-[#0E6B6E] text-[#0A2E4D] placeholder-[#0A2E4D]/40"
                 />
                 <button
                   type="button"
                   onClick={() => handleSend()}
                   disabled={!inputValue.trim()}
-                  className="p-2.5 rounded-xl bg-teal-900 hover:bg-teal-800 disabled:opacity-40 text-white transition-colors"
+                  className="p-2.5 rounded-xl bg-[#0A2E4D] hover:bg-[#08233B] disabled:opacity-40 text-[#D4AF37] transition-colors"
                 >
                   <Send className="w-4 h-4" />
                 </button>

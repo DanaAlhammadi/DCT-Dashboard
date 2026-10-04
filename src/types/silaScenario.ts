@@ -22,6 +22,32 @@ export interface BackendHealthStatus {
   errorMessage?: string;
 }
 
+export type NullableNumber = number | null;
+export type Month = string; // YYYY-MM
+export type RouteStatus = 'unchanged' | 'added' | 'removed';
+
+export interface AviationChange {
+  month: Month;
+  departure_country: string;
+  departure_city?: string | null;
+  arrival_city?: string | null;
+  airline?: string | null;
+  route_status?: RouteStatus | null;
+  seat_change?: NullableNumber;
+  weekly_frequency_change?: NullableNumber;
+  seats_per_flight?: NullableNumber;
+  load_factor_override?: NullableNumber; // Percentage, 0–100.
+  p2p_share_override?: NullableNumber; // Fraction, 0–1; added routes only.
+}
+
+export interface CanonicalScenarioRequest {
+  start_month: Month;
+  end_month: Month;
+  nationality?: string | null;
+  nationalities?: string[];
+  changes?: AviationChange[];
+}
+
 export interface SilaMonthlyIntervention {
   month: string; // YYYY-MM
   seat_change?: number;
@@ -29,7 +55,7 @@ export interface SilaMonthlyIntervention {
   [key: string]: any;
 }
 
-export interface SilaScenarioRequest {
+export interface SilaScenarioRequest extends Partial<CanonicalScenarioRequest> {
   scenario_name?: string;
   departure_country?: string;
   market?: string;
@@ -38,6 +64,7 @@ export interface SilaScenarioRequest {
   seat_capacity_change?: number;
   monthly_seat_changes?: Record<string, number>;
   interventions?: SilaMonthlyIntervention[];
+  changes?: AviationChange[];
   [key: string]: any;
 }
 

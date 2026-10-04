@@ -1,17 +1,27 @@
 @import "tailwindcss";
 
+@theme {
+  --color-sila-navy: #0A2E4D;
+  --color-sila-teal: #0E6B6E;
+  --color-sila-gold: #D4AF37;
+  --color-sila-pearl: #F4F1EA;
+  --color-sila-success: #2D6A4F;
+  --color-sila-warning: #B45309;
+  --color-sila-error: #991B1B;
+}
+
 @layer base {
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #1c1917;
-    background-color: #fbfbf9;
+    color: #0A2E4D;
+    background-color: #F4F1EA;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, .font-display {
-    font-family: 'Inter', 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     letter-spacing: -0.025em;
   }
 }

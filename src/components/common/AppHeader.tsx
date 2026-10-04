@@ -40,24 +40,24 @@ export const AppHeader: React.FC<Props> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF9F5]/90 backdrop-blur-md border-b border-stone-200/80 transition-all no-print">
+    <header className="sticky top-0 z-40 bg-[#F4F1EA]/95 backdrop-blur-md border-b border-[#0A2E4D]/10 transition-all no-print">
       {/* Top subtle bar: Minimal identity & utilities */}
       <div className="max-w-6xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
         {/* Brand identity */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-teal-900 text-stone-100 flex items-center justify-center font-bold text-sm tracking-tight shadow-xs">
+          <div className="w-8 h-8 rounded-xl bg-[#0A2E4D] text-[#D4AF37] flex items-center justify-center font-bold text-sm tracking-tight shadow-xs">
             ص
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-stone-900 tracking-tight text-base">SILA</span>
-              <span className="text-stone-300 font-light">|</span>
-              <span className="text-stone-700 font-medium text-sm font-arabic">صِلَة</span>
-              <span className="text-[11px] text-stone-400 font-normal hidden sm:inline">
+              <span className="font-semibold text-[#0A2E4D] tracking-tight text-base">SILA</span>
+              <span className="text-[#0A2E4D]/25 font-light">|</span>
+              <span className="text-[#0A2E4D]/90 font-medium text-sm font-arabic">صِلَة</span>
+              <span className="text-[11px] text-[#0A2E4D]/50 font-normal hidden sm:inline">
                 · Decision Intelligence
               </span>
             </div>
-            <p className="text-[11px] text-stone-500 font-normal hidden sm:block">
+            <p className="text-[11px] text-[#0A2E4D]/60 font-normal hidden sm:block">
               Flight-to-Hotel Decision Intelligence
             </p>
           </div>
@@ -71,9 +71,9 @@ export const AppHeader: React.FC<Props> = ({
               type="button"
               onClick={onOpenDataCheck}
               title="Verify 9 server-side datasets"
-              className="text-stone-500 hover:text-stone-800 text-xs font-medium px-2.5 py-1.5 rounded-lg hover:bg-stone-200/50 transition-colors hidden md:inline-flex items-center gap-1.5"
+              className="text-[#0A2E4D]/70 hover:text-[#0A2E4D] text-xs font-medium px-2.5 py-1.5 rounded-lg hover:bg-[#0A2E4D]/5 transition-colors hidden md:inline-flex items-center gap-1.5"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#2D6A4F]" />
               <span>Data Audit</span>
             </button>
           )}
@@ -82,7 +82,7 @@ export const AppHeader: React.FC<Props> = ({
             id="nav-glossary-btn"
             type="button"
             onClick={onOpenGlossary}
-            className="text-stone-500 hover:text-stone-800 text-xs font-medium px-2.5 py-1.5 rounded-lg hover:bg-stone-200/50 transition-colors hidden sm:inline-flex items-center gap-1.5"
+            className="text-[#0A2E4D]/70 hover:text-[#0A2E4D] text-xs font-medium px-2.5 py-1.5 rounded-lg hover:bg-[#0A2E4D]/5 transition-colors hidden sm:inline-flex items-center gap-1.5"
           >
             <BookOpen className="w-3.5 h-3.5" />
             <span>Glossary</span>
@@ -94,14 +94,14 @@ export const AppHeader: React.FC<Props> = ({
             onClick={onOpenSaved}
             className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1.5 border ${
               savedCount > 0
-                ? 'bg-amber-50/80 border-amber-200/80 text-amber-900 hover:bg-amber-100/70'
-                : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50'
+                ? 'bg-white border-[#D4AF37]/50 text-[#0A2E4D] shadow-xs'
+                : 'bg-white border-[#0A2E4D]/15 text-[#0A2E4D]/80 hover:bg-[#F4F1EA]'
             }`}
           >
-            <BookmarkCheck className={`w-3.5 h-3.5 ${savedCount > 0 ? 'text-amber-700' : 'text-stone-400'}`} />
+            <BookmarkCheck className={`w-3.5 h-3.5 ${savedCount > 0 ? 'text-[#D4AF37]' : 'text-[#0A2E4D]/40'}`} />
             <span>Saved</span>
             {savedCount > 0 && (
-              <span className="ml-0.5 px-1.5 py-0.2 rounded-full bg-amber-200/60 text-amber-950 font-mono text-[10px] font-bold">
+              <span className="ml-0.5 px-1.5 py-0.2 rounded-full bg-[#D4AF37]/20 text-[#0A2E4D] font-mono text-[10px] font-bold">
                 {savedCount}
               </span>
             )}
@@ -111,16 +111,16 @@ export const AppHeader: React.FC<Props> = ({
             id="nav-export-brief-btn"
             type="button"
             onClick={onExportBrief}
-            className="bg-stone-900 hover:bg-stone-800 text-white text-xs font-medium px-3.5 py-1.5 rounded-lg shadow-xs hover:shadow-sm transition-all inline-flex items-center gap-1.5"
+            className="bg-[#0A2E4D] hover:bg-[#08233B] text-white text-xs font-medium px-3.5 py-1.5 rounded-lg shadow-xs hover:shadow-sm transition-all inline-flex items-center gap-1.5"
           >
-            <FileDown className="w-3.5 h-3.5 text-stone-300" />
+            <FileDown className="w-3.5 h-3.5 text-[#D4AF37]" />
             <span>Decision Brief</span>
           </button>
         </div>
       </div>
 
       {/* Main 4-Tab Navigation */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 border-t border-stone-200/60">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 border-t border-[#0A2E4D]/10">
         <nav className="flex items-center gap-2 sm:gap-6 overflow-x-auto no-scrollbar py-1" aria-label="Main Navigation">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -132,25 +132,25 @@ export const AppHeader: React.FC<Props> = ({
                 onClick={() => onSelectTab(tab.id)}
                 className={`group py-2.5 px-3 rounded-xl transition-all text-left flex items-center gap-2.5 relative whitespace-nowrap ${
                   isActive
-                    ? 'text-teal-950 font-semibold'
-                    : 'text-stone-500 hover:text-stone-900 font-medium'
+                    ? 'text-[#0A2E4D] font-semibold'
+                    : 'text-[#0A2E4D]/60 hover:text-[#0A2E4D] font-medium'
                 }`}
               >
                 <div
                   className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
-                    isActive ? 'bg-teal-900 text-white shadow-xs' : 'bg-stone-100 text-stone-500 group-hover:bg-stone-200/70'
+                    isActive ? 'bg-[#0A2E4D] text-[#D4AF37] shadow-xs' : 'bg-[#0A2E4D]/5 text-[#0A2E4D]/70 group-hover:bg-[#0A2E4D]/10'
                   }`}
                 >
                   <tab.icon className="w-3.5 h-3.5" />
                 </div>
                 <div>
                   <div className="text-xs sm:text-sm tracking-tight leading-none">{tab.title}</div>
-                  <div className="text-[10px] text-stone-400 font-normal leading-tight mt-0.5 hidden sm:block">
+                  <div className="text-[10px] text-[#0A2E4D]/50 font-normal leading-tight mt-0.5 hidden sm:block">
                     {tab.subtitle}
                   </div>
                 </div>
                 {isActive && (
-                  <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-teal-800 rounded-full" />
+                  <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#0A2E4D] rounded-full" />
                 )}
               </button>
             );

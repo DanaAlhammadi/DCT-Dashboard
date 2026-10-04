@@ -76,10 +76,10 @@ export const TrustDataTab: React.FC<Props> = () => {
     <div className="space-y-10 animate-in fade-in duration-150 max-w-5xl mx-auto" id="trust-data-assumptions-tab">
       {/* Editorial Header */}
       <div className="text-center max-w-2xl mx-auto space-y-2 pt-2">
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-stone-900 font-display">
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#0A2E4D] font-display">
           Can I rely on this result?
         </h1>
-        <p className="text-sm sm:text-base text-stone-500 font-normal leading-relaxed">
+        <p className="text-sm sm:text-base text-[#0A2E4D]/60 font-normal leading-relaxed">
           Full methodological transparency, model benchmarks, and empirical data governance grounded in DCT research.
         </p>
       </div>
@@ -92,37 +92,37 @@ export const TrustDataTab: React.FC<Props> = () => {
           return (
             <div
               key={sec.id}
-              className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/80 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] space-y-4"
+              className="bg-white rounded-3xl p-6 sm:p-8 border border-[#0A2E4D]/10 shadow-[0_2px_12px_-4px_rgba(10,46,77,0.04)] space-y-4"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#0A2E4D]/10 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-800 flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-xl bg-[#0E6B6E]/10 text-[#0E6B6E] flex items-center justify-center shrink-0">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm sm:text-base font-semibold text-stone-900 tracking-tight">
+                    <h3 className="text-sm sm:text-base font-semibold text-[#0A2E4D] tracking-tight">
                       {sec.title}
                     </h3>
                   </div>
                 </div>
 
-                <span className="text-xs font-mono font-medium text-stone-500 self-start sm:self-auto">
+                <span className="text-xs font-mono font-medium text-[#0A2E4D]/60 self-start sm:self-auto">
                   {sec.badge}
                 </span>
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-sm sm:text-base font-medium text-stone-800">
+                <h4 className="text-sm sm:text-base font-medium text-[#0A2E4D]">
                   {sec.headline}
                 </h4>
-                <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-[#0A2E4D]/70 leading-relaxed font-normal">
                   {sec.body}
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-stone-50 border border-stone-200/60 text-xs text-stone-700 flex items-start gap-2">
-                <span className="font-semibold text-teal-900 shrink-0">Governance Rule:</span>
-                <span className="text-stone-600">{sec.rule}</span>
+              <div className="p-3.5 rounded-2xl bg-[#F4F1EA]/70 border border-[#0A2E4D]/10 text-xs text-[#0A2E4D] flex items-start gap-2">
+                <span className="font-semibold text-[#0E6B6E] shrink-0">Governance Rule:</span>
+                <span className="text-[#0A2E4D]/80">{sec.rule}</span>
               </div>
             </div>
           );
@@ -135,13 +135,13 @@ export const TrustDataTab: React.FC<Props> = () => {
           type="button"
           id="toggle-technical-audit-btn"
           onClick={() => setShowTechnicalAudit((prev) => !prev)}
-          className="w-full py-4 px-6 rounded-2xl bg-white hover:bg-stone-50 border border-stone-200/80 text-stone-700 text-xs sm:text-sm font-semibold flex items-center justify-between transition-colors shadow-xs"
+          className="w-full py-4 px-6 rounded-2xl bg-white hover:bg-[#F4F1EA]/80 border border-[#0A2E4D]/10 text-[#0A2E4D] text-xs sm:text-sm font-semibold flex items-center justify-between transition-colors shadow-xs"
         >
           <div className="flex items-center gap-2.5">
-            <Database className="w-4 h-4 text-teal-800" />
+            <Database className="w-4 h-4 text-[#0E6B6E]" />
             <span>Technical Verification &amp; Data Integration Audit (9 Server Datasets)</span>
           </div>
-          <div className="flex items-center gap-1.5 text-stone-400 font-normal text-xs">
+          <div className="flex items-center gap-1.5 text-[#0A2E4D]/50 font-normal text-xs">
             <span>{showTechnicalAudit ? 'Hide technical audit' : 'Show full technical audit'}</span>
             {showTechnicalAudit ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </div>

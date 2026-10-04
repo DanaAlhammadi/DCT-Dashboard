@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ScenarioResult } from '../../types/dashboard';
+import { SilaScenarioResponse, SilaMonthlyPrediction, SilaNationalitySummary } from '../../types/silaScenario';
+import { ScenarioResult, MonthlyForecast } from '../../types/dashboard';
 import {
   ResponsiveContainer,
   BarChart,
@@ -8,156 +9,108 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  Legend,
 } from 'recharts';
-import { Info, Lightbulb, HelpCircle, ArrowRight } from 'lucide-react';
+import { Calendar, Globe, Info, Layers, CheckCircle2 } from 'lucide-react';
 
 interface Props {
-  result: ScenarioResult;
+  silaResponse?: SilaScenarioResponse | null;
+  result?: ScenarioResult | null;
 }
 
-export const BaselineScenarioChart: React.FC<Props> = ({ result }) => {
-  const [viewMode, setViewMode] = useState<'absolute' | 'percentage'>('absolute');
+function formatVal(val: number | null | undefined): string {
+  if (val === null || val === undefined || isNaN(val)) return 'Unavailable';
+  return new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(val);
+}
 
-  // Display confirmed analytical targets with beginner-friendly labels & explanations
-  const data = [
-    {
-      step: 'Step 1',
-      name: 'Flight Seats',
-      fullName: 'Scheduled Airline Seats',
-      desc: 'Total airplane capacity scheduled to fly into Abu Dhabi',
-      technicalDef: 'Commercial scheduled seats on this route per month.',
-      baseline: result.totalSeats.baseline,
-      scenario: result.totalSeats.scenario,
-      diff: result.totalSeats.diff,
-      diffPct: result.totalSeats.pct,
-    },
-    {
-      step: 'Step 2',
-      name: 'Arriving Passengers',
-      fullName: 'Total Arriving Passengers',
-      desc: 'All travelers flying into AUH airport (including transit)',
-      technicalDef: 'Total PAX: Aviation passenger count (Scheduled Seats × Load Factor).',
-      baseline: result.totalPax.baseline,
-      scenario: result.totalPax.scenario,
-      diff: result.totalPax.diff,
-      diffPct: result.totalPax.pct,
-    },
-    {
-      step: 'Step 3',
-      name: 'Direct Visitors',
-      fullName: 'Direct Abu Dhabi Visitors',
-      desc: 'Passengers ending their journey in Abu Dhabi rather than connecting elsewhere',
-      technicalDef: 'Point-to-Point (P2P) Passengers = Total PAX − Transfer PAX − Transit PAX.',
-      baseline: result.totalP2P.baseline,
-      scenario: result.totalP2P.scenario,
-      diff: result.totalP2P.diff,
-      diffPct: result.totalP2P.pct,
-    },
-    {
-      step: 'Step 4',
-      name: 'Inbound Tourists',
-      fullName: 'Inbound Tourists & Travelers',
-      desc: 'International visitors entering the emirate for business or holiday',
-      technicalDef: 'Direct Visitors × (1 − Returning UAE Resident Expatriates Share).',
-      baseline: result.inboundVisitors.baseline,
-      scenario: result.inboundVisitors.scenario,
-      diff: result.inboundVisitors.diff,
-      diffPct: result.inboundVisitors.pct,
-    },
-    {
-      step: 'Step 5',
-      name: 'Hotel Check-ins',
-      fullName: 'Commercial Hotel Arrivals',
-      desc: 'Guests checking into Abu Dhabi hotels for overnight stays',
-      technicalDef: 'Target metric: Commercial hotel arrivals based on market conversion capture rate.',
-      baseline: result.hotelGuests.baseline,
-      scenario: result.hotelGuests.scenario,
-      diff: result.hotelGuests.diff,
-      diffPct: result.hotelGuests.pct,
-    },
-  ];
+function formatChange(val: number | null | undefined): string {
+  if (val === null || val === undefined || isNaN(val)) return 'Unavailable';
+  const prefix = val > 0 ? '+' : '';
+  return `${prefix}${new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(val)}`;
+}
 
-  // Custom beginner-friendly tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
+export const BaselineScenarioChart: React.FC<Props> = ({ silaResponse, result }) => {
+  const [activeMetric, setActiveMetric] = useState<'checkins' | 'guest_days'>('checkins');
+
+  // Authoritative monthly[] array from backend response
+  const monthlyData: SilaMonthlyPrediction[] = silaResponse?.monthly && silaResponse.monthly.length > 0
+    ? silaResponse.monthly
+    : result?.monthlyBreakdown
+      ? result.monthlyBreakdown.map((m: MonthlyForecast) => ({
+          month: m.month,
+          baseline: m.baselineGuests,
+          scenario: m.scenarioGuests,
+          change: m.scenarioGuests - m.baselineGuests,
+          baseline_recorded_guest_days: null,
+          scenario_recorded_guest_days: null,
+          change_recorded_guest_days: null,
+        }))
+      : [];
+
+  // Authoritative by_nationality[] array from backend response (kept strictly separate from monthly)
+  const nationalitySummaries: SilaNationalitySummary[] = silaResponse?.by_nationality || [];
+
+  // Chart data format
+  const chartData = monthlyData.map((m) => {
+    const isGuestDays = activeMetric === 'guest_days';
+    const base = isGuestDays
+      ? (m.baseline_recorded_guest_days ?? null)
+      : (m.baseline ?? null);
+    const scen = isGuestDays
+      ? (m.scenario_recorded_guest_days ?? null)
+      : (m.scenario ?? null);
+    const diff = isGuestDays
+      ? (m.change_recorded_guest_days ?? null)
+      : (m.change ?? null);
+
+    return {
+      month: m.month,
+      baseline: base,
+      scenario: scen,
+      change: diff,
+      lower_bound: m.lower_bound ?? null,
+      upper_bound: m.upper_bound ?? null,
+    };
+  });
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const item = payload[0].payload;
-      const isPositive = item.diff >= 0;
-
+      const dataPoint = payload[0].payload;
       return (
-        <div className="bg-slate-900/95 text-white p-3.5 rounded-xl shadow-xl border border-slate-700 max-w-xs text-xs space-y-2 backdrop-blur-xs">
-          <div className="border-b border-slate-700/80 pb-1.5">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-teal-400">
-              {item.step}
+        <div className="bg-[#0A2E4D] text-[#F4F1EA] p-3.5 rounded-2xl shadow-xl border border-[#0A2E4D]/30 max-w-xs text-xs space-y-2">
+          <div className="border-b border-[#F4F1EA]/15 pb-1 flex items-center justify-between">
+            <span className="font-semibold text-white">{label}</span>
+            <span className="text-[10px] uppercase font-mono text-[#D4AF37]">
+              {activeMetric === 'checkins' ? 'Hotel Check-ins' : 'Guest-Days Proxy'}
             </span>
-            <h4 className="font-bold text-sm text-white">{item.fullName}</h4>
-            <p className="text-[11px] text-slate-300 mt-0.5 leading-snug">{item.desc}</p>
           </div>
 
-          {viewMode === 'absolute' ? (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-slate-300">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-slate-400 inline-block" />
-                  Current Baseline:
-                </span>
-                <span className="font-mono font-bold text-white">
-                  {item.baseline ? item.baseline.toLocaleString() : 'N/A'}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-teal-300">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-teal-500 inline-block" />
-                  Planned Scenario:
-                </span>
-                <span className="font-mono font-bold text-teal-200">
-                  {item.scenario ? item.scenario.toLocaleString() : 'N/A'}
-                </span>
-              </div>
-              <div className="pt-1.5 border-t border-slate-700/80 flex items-center justify-between">
-                <span className="text-slate-400 text-[11px]">Net Change:</span>
-                <span
-                  className={`font-mono font-bold ${
-                    isPositive ? 'text-emerald-400' : 'text-rose-400'
-                  }`}
-                >
-                  {isPositive ? '+' : ''}
-                  {item.diff ? item.diff.toLocaleString() : '0'} ({isPositive ? '+' : ''}
-                  {item.diffPct ? item.diffPct.toFixed(1) : '0.0'}%)
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-300">Change from baseline:</span>
-                <span
-                  className={`font-mono font-bold text-sm ${
-                    item.diffPct >= 0 ? 'text-emerald-400' : 'text-rose-400'
-                  }`}
-                >
-                  {item.diffPct >= 0 ? '+' : ''}
-                  {item.diffPct?.toFixed(1)}%
-                </span>
-              </div>
-              <div className="text-[11px] text-slate-400 flex items-center gap-1 pt-1">
-                <span>Baseline: {item.baseline?.toLocaleString()}</span>
-                <ArrowRight className="w-3 h-3 text-slate-500" />
-                <span className="text-teal-300">Scenario: {item.scenario?.toLocaleString()}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Technical definition tooltip block */}
-          {item.technicalDef && (
-            <div className="pt-1.5 mt-1 border-t border-slate-700/80 text-[10px]">
-              <span className="text-teal-400 font-bold block uppercase tracking-wider text-[9px] mb-0.5">
-                Technical Definition:
+          <div className="space-y-1 font-mono text-[11px]">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-[#F4F1EA]/80">
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#0A2E4D] border border-white/40" />
+                Baseline:
               </span>
-              <p className="font-mono text-slate-300 leading-tight">
-                {item.technicalDef}
-              </p>
+              <span className="font-semibold text-white">{formatVal(dataPoint.baseline)}</span>
             </div>
-          )}
+
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-[#F4F1EA]/80">
+                <span className="w-2.5 h-2.5 rounded-xs bg-[#0E6B6E]" />
+                Scenario:
+              </span>
+              <span className="font-semibold text-[#0E6B6E]">{formatVal(dataPoint.scenario)}</span>
+            </div>
+
+            <div className="flex items-center justify-between pt-1 border-t border-[#F4F1EA]/15 text-[#D4AF37]">
+              <span>Net Impact:</span>
+              <span className="font-bold">{formatChange(dataPoint.change)}</span>
+            </div>
+
+            <div className="pt-1 text-[10px] text-[#F4F1EA]/60 font-sans">
+              Prediction interval: Prediction interval not available
+            </div>
+          </div>
         </div>
       );
     }
@@ -165,208 +118,152 @@ export const BaselineScenarioChart: React.FC<Props> = ({ result }) => {
   };
 
   return (
-    <div
-      className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs space-y-4"
-      id="baseline-scenario-chart-card"
-    >
-      {/* 1. Header with plain-language title and subtitle */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#0A2E4D]/10 shadow-[0_2px_12px_-4px_rgba(10,46,77,0.04)] space-y-6" id="monthly-result-chart-card">
+      {/* Header & Toggle */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#0A2E4D]/10 pb-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-teal-900">
-              Comparative Impact
-            </span>
-            <span className="text-stone-300">·</span>
-            <span className="text-[11px] text-stone-500 font-medium">5 Funnel Stages</span>
-          </div>
-
-          <h2 className="text-lg font-bold text-slate-900 font-display mt-1.5">
-            Flight-to-Hotel Impact: Baseline vs. Planned Scenario
-          </h2>
-
-          {/* Plain-Language Subtitle */}
-          <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-            See step-by-step how scheduled airline seats turn into actual hotel check-ins in Abu
-            Dhabi, comparing what happens today against your planned flight changes.
-          </p>
-        </div>
-
-        {/* Absolute Numbers vs Percentage Toggle */}
-        <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-semibold shrink-0 self-start sm:self-auto">
-          <button
-            id="chart-toggle-abs-btn"
-            type="button"
-            onClick={() => setViewMode('absolute')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              viewMode === 'absolute'
-                ? 'bg-white text-slate-900 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Actual Counts
-          </button>
-          <button
-            id="chart-toggle-pct-btn"
-            type="button"
-            onClick={() => setViewMode('percentage')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              viewMode === 'percentage'
-                ? 'bg-white text-slate-900 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            % Change
-          </button>
-        </div>
-      </div>
-
-      {/* 2. One sentence explaining why it matters */}
-      <div
-        className="bg-amber-50/90 border border-amber-200/90 rounded-xl p-3.5 flex items-start gap-3 text-xs text-amber-950"
-        id="chart-why-it-matters-banner"
-      >
-        <div className="w-6 h-6 rounded-lg bg-amber-200/80 text-amber-900 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-          <Lightbulb className="w-3.5 h-3.5" />
-        </div>
-        <div className="flex-1">
-          <span className="font-bold text-amber-900 uppercase tracking-wider text-[11px] block">
-            Why this matters:
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0E6B6E]">
+            Backend Monthly Evaluation
           </span>
-          <p className="text-slate-800 mt-0.5 leading-relaxed font-medium">
-            This shows whether extra flight capacity actually delivers paying hotel guests to Abu
-            Dhabi or simply adds transit passengers passing through the airport.
+          <h3 className="text-lg sm:text-xl font-semibold text-[#0A2E4D] tracking-tight mt-0.5">
+            Baseline vs. Scenario Monthly Trajectory
+          </h3>
+          <p className="text-xs text-[#0A2E4D]/60 font-normal">
+            Derived directly from the authoritative <code className="font-mono text-[#0E6B6E]">monthly[]</code> response array.
           </p>
         </div>
-      </div>
 
-      {/* 3. Obvious, beginner-friendly legend */}
-      <div
-        className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-50/90 border border-slate-200/80 rounded-xl text-xs"
-        id="chart-obvious-legend"
-      >
-        <div className="flex items-center gap-1.5 text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
-          <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-          <span>Legend:</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-          {viewMode === 'absolute' ? (
-            <>
-              {/* Grey Bar Legend */}
-              <div className="flex items-center gap-2">
-                <span className="w-3.5 h-3.5 rounded-xs bg-slate-400 shadow-2xs inline-block" />
-                <span className="text-slate-700">
-                  <strong className="text-slate-900">Grey Bar = Current Baseline</strong>{' '}
-                  <span className="text-slate-500 hidden sm:inline">(What happens right now)</span>
-                </span>
-              </div>
-
-              {/* Teal Bar Legend */}
-              <div className="flex items-center gap-2">
-                <span className="w-3.5 h-3.5 rounded-xs bg-teal-700 shadow-2xs inline-block" />
-                <span className="text-slate-700">
-                  <strong className="text-teal-900">Teal Bar = Planned Scenario</strong>{' '}
-                  <span className="text-slate-500 hidden sm:inline">(Result with flight changes)</span>
-                </span>
-              </div>
-            </>
-          ) : (
-            <div className="flex items-center gap-2">
-              <span className="w-3.5 h-3.5 rounded-xs bg-teal-700 shadow-2xs inline-block" />
-              <span className="text-slate-700">
-                <strong className="text-teal-900">Teal Bar = Percentage Growth</strong>{' '}
-                <span className="text-slate-500">
-                  (% increase or decrease compared to current baseline)
-                </span>
-              </span>
-            </div>
-          )}
+        {/* Metric Selector Toggle */}
+        <div className="flex items-center p-1 rounded-xl bg-[#F4F1EA] border border-[#0A2E4D]/10 text-xs font-semibold self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => setActiveMetric('checkins')}
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              activeMetric === 'checkins'
+                ? 'bg-white text-[#0A2E4D] shadow-xs font-bold'
+                : 'text-[#0A2E4D]/60 hover:text-[#0A2E4D]'
+            }`}
+          >
+            Hotel Check-ins
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveMetric('guest_days')}
+            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              activeMetric === 'guest_days'
+                ? 'bg-white text-[#0A2E4D] shadow-xs font-bold'
+                : 'text-[#0A2E4D]/60 hover:text-[#0A2E4D]'
+            }`}
+          >
+            Recorded Guest-Days Proxy
+          </button>
         </div>
       </div>
 
-      {/* 4. Chart container */}
-      <div className="h-64 sm:h-72 w-full pt-1">
+      {/* Recharts Bar Chart */}
+      <div className="h-64 sm:h-72 w-full pt-2">
         <ResponsiveContainer width="100%" height="100%">
-          {viewMode === 'absolute' ? (
-            <BarChart data={data} margin={{ top: 12, right: 12, left: 0, bottom: 24 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 11, fill: '#475569', fontWeight: 500 }}
-                axisLine={{ stroke: '#cbd5e1' }}
-                tickLine={false}
-                interval={0}
-              />
-              <YAxis
-                tick={{ fontSize: 11, fill: '#64748b' }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(val) => (val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val)}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar
-                dataKey="baseline"
-                name="Current Baseline"
-                fill="#94a3b8"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={32}
-              />
-              <Bar
-                dataKey="scenario"
-                name="Planned Scenario"
-                fill="#0f766e"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={32}
-              />
-            </BarChart>
-          ) : (
-            <BarChart data={data} margin={{ top: 12, right: 12, left: 0, bottom: 24 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 11, fill: '#475569', fontWeight: 500 }}
-                axisLine={{ stroke: '#cbd5e1' }}
-                tickLine={false}
-                interval={0}
-              />
-              <YAxis
-                tick={{ fontSize: 11, fill: '#64748b' }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(val) => `${val}%`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar
-                dataKey="diffPct"
-                name="% Change vs Baseline"
-                fill="#0f766e"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={36}
-              />
-            </BarChart>
-          )}
+          <BarChart data={chartData} margin={{ top: 15, right: 15, left: -5, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#0A2E4D" strokeOpacity={0.06} />
+            <XAxis
+              dataKey="month"
+              tick={{ fontSize: 11, fill: '#0A2E4D', fontWeight: 500 }}
+              axisLine={{ stroke: '#0A2E4D', strokeOpacity: 0.15 }}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: '#0A2E4D', opacity: 0.6 }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(val) => (val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val)}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend
+              verticalAlign="top"
+              align="right"
+              iconType="circle"
+              wrapperStyle={{ fontSize: '11px', paddingBottom: '12px' }}
+              formatter={(value) => (
+                <span className="text-[#0A2E4D] font-medium ml-1">
+                  {value === 'baseline' ? 'Baseline' : 'Scenario'}
+                </span>
+              )}
+            />
+            {/* SILA official palette colors: Baseline = Deep Navy (#0A2E4D), Scenario = Teal (#0E6B6E) */}
+            <Bar dataKey="baseline" name="baseline" fill="#0A2E4D" radius={[6, 6, 0, 0]} maxBarSize={45} />
+            <Bar dataKey="scenario" name="scenario" fill="#0E6B6E" radius={[6, 6, 0, 0]} maxBarSize={45} />
+          </BarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* 5. Plain-language conversion outcome & status note */}
-      <div className="space-y-2 pt-2 border-t border-slate-100 text-xs">
-        <p className="text-slate-700 leading-relaxed">
-          <strong className="text-slate-900">Key Takeaway:</strong> Each 1,000 additional scheduled
-          airline seats generates approximately{' '}
-          <strong className="text-teal-800 font-mono font-bold bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">
-            {result.guestsPer1kSeats.scenario} new commercial hotel arrivals
-          </strong>{' '}
-          in Abu Dhabi.
-        </p>
-
-        <div className="flex items-center gap-2 text-[11px] text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
-          <Info className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-          <span>
-            <strong>Note on Hotel Guest Nights:</strong> Not plotted because stay-duration data is
-            still pending validation (Status: <em>Guest Nights — not yet supported</em>).
-          </span>
+      {/* Uncertainty Bounds Plain Language Notice */}
+      <div className="p-3 rounded-xl bg-[#F4F1EA]/60 border border-[#0A2E4D]/10 flex items-center justify-between text-xs text-[#0A2E4D]/70">
+        <div className="flex items-center gap-1.5 font-medium">
+          <Info className="w-3.5 h-3.5 text-[#0A2E4D]/50" />
+          <span>Prediction Interval:</span>
         </div>
+        <span className="font-normal text-[11px] text-[#0A2E4D]/60">
+          Prediction interval not available because uncertainty bounds are not calibrated.
+        </span>
       </div>
+
+      {/* NATIONALITY RESULT: by_nationality[] Period Summary Table (kept separate from monthly[]) */}
+      {nationalitySummaries.length > 0 && (
+        <div className="pt-4 border-t border-[#0A2E4D]/10 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-[#0E6B6E]" />
+              <h4 className="text-xs font-semibold text-[#0A2E4D]">
+                Nationality Period Summary (<code className="font-mono text-[11px] text-[#0E6B6E]">by_nationality[]</code>)
+              </h4>
+            </div>
+            <span className="text-[10px] text-[#0A2E4D]/50">
+              Aggregated across period months
+            </span>
+          </div>
+
+          <div className="overflow-x-auto rounded-2xl border border-[#0A2E4D]/10 bg-white">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F4F1EA] text-[#0A2E4D] font-semibold text-[11px] border-b border-[#0A2E4D]/10">
+                <tr>
+                  <th className="py-2.5 px-3">Nationality</th>
+                  <th className="py-2.5 px-3">Baseline Check-ins</th>
+                  <th className="py-2.5 px-3">Scenario Check-ins</th>
+                  <th className="py-2.5 px-3 text-[#0E6B6E]">Additional Check-ins</th>
+                  <th className="py-2.5 px-3">Conversion Factor</th>
+                  <th className="py-2.5 px-3">Recorded Guest-Days Proxy</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#0A2E4D]/10 font-mono text-[11px]">
+                {nationalitySummaries.map((n, idx) => (
+                  <tr key={idx} className="hover:bg-[#F4F1EA]/40 transition-colors">
+                    <td className="py-2.5 px-3 font-semibold font-sans text-[#0A2E4D]">
+                      {n.nationality}
+                    </td>
+                    <td className="py-2.5 px-3 text-[#0A2E4D]">
+                      {formatVal(n.baseline)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[#0A2E4D]">
+                      {formatVal(n.scenario)}
+                    </td>
+                    <td className="py-2.5 px-3 font-bold text-[#0E6B6E]">
+                      {formatChange(n.change)}
+                    </td>
+                    <td className="py-2.5 px-3 text-[#0A2E4D]/70 font-sans">
+                      {n.conversion_factor !== null && n.conversion_factor !== undefined
+                        ? `${n.conversion_factor.toFixed(2)}x`
+                        : 'Unavailable'}
+                    </td>
+                    <td className="py-2.5 px-3 text-[#0A2E4D]/80">
+                      {formatChange(n.change_recorded_guest_days)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

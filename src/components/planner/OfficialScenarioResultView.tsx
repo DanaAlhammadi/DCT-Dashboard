@@ -364,10 +364,10 @@ export const OfficialScenarioResultView: React.FC<Props> = ({
               Showing Baseline, Scenario, and Change from the backend monthly array.
             </p>
           </div>
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-            <span className="inline-block w-3 h-3 rounded bg-slate-400" /> Baseline
-            <span className="inline-block w-3 h-3 rounded bg-teal-600 ml-2" /> Scenario
-            <span className="inline-block w-3 h-3 rounded bg-emerald-500 ml-2" /> Change
+          <div className="flex items-center gap-2 text-xs font-medium text-[#0A2E4D]/70">
+            <span className="inline-block w-3 h-3 rounded bg-[#0A2E4D]" /> Baseline
+            <span className="inline-block w-3 h-3 rounded bg-[#0E6B6E] ml-2" /> Scenario
+            <span className="inline-block w-3 h-3 rounded bg-[#D4AF37] ml-2" /> Change
           </div>
         </div>
 
@@ -375,10 +375,11 @@ export const OfficialScenarioResultView: React.FC<Props> = ({
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyChartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-              <XAxis dataKey="label" stroke="#64748B" fontSize={12} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EDE8DE" />
+              <XAxis dataKey="label" stroke="#0A2E4D" fontSize={12} tickLine={false} />
               <YAxis
-                stroke="#64748B"
+                stroke="#0A2E4D"
+                opacity={0.6}
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
@@ -390,17 +391,17 @@ export const OfficialScenarioResultView: React.FC<Props> = ({
                   name,
                 ]}
                 contentStyle={{
-                  backgroundColor: '#0F172A',
-                  color: '#FFFFFF',
+                  backgroundColor: '#0A2E4D',
+                  color: '#F4F1EA',
                   borderRadius: '0.75rem',
-                  border: 'none',
+                  border: '1px solid rgba(212,175,55,0.2)',
                   fontSize: '0.75rem',
                 }}
               />
               <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-              <Bar dataKey="Baseline" fill="#94A3B8" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Scenario" fill="#0D9488" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Change" fill="#10B981" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Baseline" fill="#0A2E4D" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Scenario" fill="#0E6B6E" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Change" fill="#D4AF37" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

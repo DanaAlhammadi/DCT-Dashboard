@@ -75,6 +75,14 @@ export interface ScenarioInput {
   customLoadFactor: number | null;
   assumedWeeklyFrequencyChange: number | null;
   aircraftType?: string;
+  seatsPerFlight?: number;
+  newRouteDepartureCountry?: string;
+  newRouteDepartureCity?: string;
+  newRouteArrivalCity?: string;
+  newRouteAirline?: string;
+  newRouteMonthlyCapacity?: number;
+  newRouteLoadFactor?: number;
+  newRouteP2PShare?: number;
   transferShareOverride?: number | null;
   transitShareOverride?: number | null;
   visitorShareOverride?: number | null;

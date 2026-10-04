@@ -33,30 +33,30 @@ export const MonthlyImpactChart: React.FC<Props> = ({ data, supportLevel }) => {
   const hasEvents = data.some((d) => d.eventName);
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4" id="monthly-impact-chart-card">
+    <div className="bg-white rounded-2xl p-5 border border-[#0A2E4D]/10 shadow-xs space-y-4" id="monthly-impact-chart-card">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#0E6B6E]">
             Timeline Forecast
           </span>
-          <h2 className="text-base font-bold text-slate-900 font-display mt-1">
-            Monthly Hotel Demand & Uncertainty Band
+          <h2 className="text-base font-bold text-[#0A2E4D] font-display mt-1">
+            Monthly Hotel Demand &amp; Uncertainty Band
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#0A2E4D]/60">
             Projected seasonal trajectory across the simulation timeframe.
           </p>
         </div>
 
         {/* Metric Selector */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-semibold">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#F4F1EA] border border-[#0A2E4D]/10 text-xs font-semibold">
           <button
             id="monthly-toggle-guests-btn"
             type="button"
             onClick={() => setMetric('guests')}
             className={`px-3 py-1 rounded-lg transition-all ${
               metric === 'guests'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-[#0A2E4D] shadow-xs font-bold'
+                : 'text-[#0A2E4D]/60 hover:text-[#0A2E4D]'
             }`}
           >
             Hotel Guests
@@ -67,8 +67,8 @@ export const MonthlyImpactChart: React.FC<Props> = ({ data, supportLevel }) => {
             onClick={() => setMetric('nights')}
             className={`px-3 py-1 rounded-lg transition-all ${
               metric === 'nights'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-[#0A2E4D] shadow-xs font-bold'
+                : 'text-[#0A2E4D]/60 hover:text-[#0A2E4D]'
             }`}
           >
             Guest Nights
@@ -80,22 +80,27 @@ export const MonthlyImpactChart: React.FC<Props> = ({ data, supportLevel }) => {
       <div className="h-64 sm:h-72 w-full pt-2">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EDE8DE" />
             <XAxis
               dataKey="month"
-              tick={{ fontSize: 11, fill: '#64748b' }}
-              axisLine={{ stroke: '#e2e8f0' }}
+              tick={{ fontSize: 11, fill: '#0A2E4D' }}
+              axisLine={{ stroke: '#0A2E4D', strokeOpacity: 0.2 }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: '#64748b' }}
+              tick={{ fontSize: 11, fill: '#0A2E4D', opacity: 0.6 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(val) => (val >= 1000 ? `${(val / 1000).toFixed(0)}k` : val)}
             />
             <Tooltip
-              contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: 'none', color: '#fff' }}
-              itemStyle={{ color: '#e2e8f0', fontSize: '12px' }}
+              contentStyle={{
+                backgroundColor: '#0A2E4D',
+                borderRadius: '12px',
+                border: '1px solid rgba(212,175,55,0.2)',
+                color: '#F4F1EA',
+              }}
+              itemStyle={{ color: '#F4F1EA', fontSize: '12px' }}
               formatter={(val: any, name: any) => [val?.toLocaleString(), name]}
               labelFormatter={(label, payload) => {
                 const item = payload?.[0]?.payload;
@@ -111,8 +116,8 @@ export const MonthlyImpactChart: React.FC<Props> = ({ data, supportLevel }) => {
               dataKey="confidenceMax"
               name="Uncertainty Range (Max)"
               stroke="transparent"
-              fill="#ccfbf1"
-              fillOpacity={0.6}
+              fill="#0E6B6E"
+              fillOpacity={0.12}
             />
             <Area
               dataKey="confidenceMin"
@@ -124,18 +129,18 @@ export const MonthlyImpactChart: React.FC<Props> = ({ data, supportLevel }) => {
               type="monotone"
               dataKey="baseline"
               name="Baseline Trajectory"
-              stroke="#94a3b8"
+              stroke="#0A2E4D"
               strokeWidth={2}
               strokeDasharray="4 4"
-              dot={{ r: 3, fill: '#94a3b8' }}
+              dot={{ r: 3, fill: '#0A2E4D' }}
             />
             <Line
               type="monotone"
               dataKey="scenario"
               name="Scenario Trajectory"
-              stroke="#0d9488"
+              stroke="#0E6B6E"
               strokeWidth={3}
-              dot={{ r: 4, fill: '#0d9488' }}
+              dot={{ r: 4, fill: '#0E6B6E' }}
             />
           </ComposedChart>
         </ResponsiveContainer>
@@ -143,8 +148,8 @@ export const MonthlyImpactChart: React.FC<Props> = ({ data, supportLevel }) => {
 
       {/* Events indicator banner */}
       {hasEvents && (
-        <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs text-amber-950 flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+        <div className="p-3 bg-[#F4F1EA] border border-[#D4AF37]/40 rounded-xl text-xs text-[#0A2E4D] flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-[#B45309] shrink-0" />
           <span>
             <strong>Active Event Overlay:</strong> Special event tourism draws (e.g. Culture Summit / Abu Dhabi Grand Prix) are factored into timeline calculations.
           </span>

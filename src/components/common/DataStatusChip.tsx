@@ -11,16 +11,16 @@ export const DataStatusChip: React.FC<Props> = ({ status, size = 'sm', className
   const getStyle = () => {
     switch (status) {
       case 'Observed':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-[#0A2E4D]/8 text-[#0A2E4D] border-[#0A2E4D]/15';
       case 'Derived':
-        return 'bg-purple-50 text-purple-700 border-purple-200';
+        return 'bg-[#0E6B6E]/10 text-[#0E6B6E] border-[#0E6B6E]/20';
       case 'Estimated':
-        return 'bg-teal-50 text-teal-700 border-teal-200';
+        return 'bg-[#D4AF37]/15 text-[#0A2E4D] border-[#D4AF37]/35';
       case 'Assumed':
-        return 'bg-amber-50 text-amber-800 border-amber-300';
+        return 'bg-[#B45309]/10 text-[#B45309] border-[#B45309]/25';
       case 'Unknown':
       default:
-        return 'bg-slate-100 text-slate-600 border-slate-200';
+        return 'bg-[#F4F1EA] text-[#0A2E4D]/60 border-[#0A2E4D]/15';
     }
   };
 

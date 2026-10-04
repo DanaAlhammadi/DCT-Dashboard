@@ -13,7 +13,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import {
+import type {
   FileIntegrationSummary,
   GlobalDataStats,
   MetadataDoc,
@@ -26,7 +26,7 @@ import {
   FlightMarketMonthlyRecord,
   DataQualityDoc,
   DataQualityRecordItem,
-} from '../../src/types/dashboardData';
+} from '../../src/types/dashboardData.ts';
 
 const SERVER_DATA_DIR = path.resolve(process.cwd(), 'server/data/dashboard_data_v1');
 
