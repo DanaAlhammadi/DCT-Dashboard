@@ -478,10 +478,10 @@ export default function App() {
                       type="button"
                       disabled={!validation.isValid || isCalculating}
                       onClick={handleRunScenario}
-                      className={`flex-1 py-3.5 px-6 rounded-2xl font-semibold text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                      className={`flex-1 py-3.5 px-6 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 ease-out cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#0E6B6E] focus:ring-offset-2 ${
                         !validation.isValid || isCalculating
-                          ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
-                          : 'bg-[#0A2E4D] hover:bg-[#08233B] text-white shadow-[#0A2E4D]/10 hover:scale-[1.01] active:scale-[0.99]'
+                          ? 'bg-stone-200 text-stone-400 shadow-none cursor-not-allowed transform-none'
+                          : 'bg-[#0A2E4D] text-white shadow-md shadow-[#0A2E4D]/15 hover:bg-[#08233B] hover:scale-[1.02] hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#0A2E4D]/25 active:scale-[0.99] active:translate-y-0 active:shadow-md'
                       }`}
                     >
                       {isCalculating ? (
